@@ -1,0 +1,81 @@
+# Python Bytecode and Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Kaggle & API Credentials
+kaggle.json
+*.pem
+*.key
+
+# Data & Large Files (Scientific Images / Annotations)
+data/
+inputs/
+*.fits
+*.fts
+*.tiff
+*.h5
+*.hdf5
+*.zip
+*.tar.gz
+
+# Model Checkpoints & Training Outputs
+outputs/checkpoints/
+outputs/logs/
+outputs/predictions/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
