@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import albumentations as A
 
 
 def load_image(image_path: str | Path, as_rgb: bool = True) -> np.ndarray:
@@ -135,3 +136,87 @@ def get_transforms(
     except ImportError:
         # Stub callable when albumentations is not installed yet
         return lambda **kwargs: kwargs
+    
+def get_train_transform(patch_size=512):
+    return A.Compose([
+        A.RandomCrop(
+            height=patch_size,
+            width=patch_size,
+            p=1.0,
+        ),
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.RandomRotate90(p=0.5),
+    ])
+
+def get_val_transform(patch_size=512):
+    return A.Compose([
+        A.CenterCrop(
+            height=patch_size,
+            width=patch_size,
+            p=1.0,
+        ),
+    ])
+
+
+import numpy as np
+import albumentations as A
+
+
+class ForegroundAwareCrop:
+    def __init__(self, patch_size=512, foreground_prob=0.7):
+        self.patch_size = patch_size
+        self.foreground_prob = foreground_prob
+
+    def __call__(self, image, mask, **kwargs):
+        height, width = mask.shape[:2]
+        size = self.patch_size
+
+        if height < size or width < size:
+            raise ValueError("Image is smaller than patch size")
+
+        foreground_y, foreground_x = np.where(mask > 0)
+
+        use_foreground = (
+            len(foreground_y) > 0
+            and np.random.random() < self.foreground_prob
+        )
+
+        if use_foreground:
+            index = np.random.randint(len(foreground_y))
+
+            center_y = int(foreground_y[index])
+            center_x = int(foreground_x[index])
+
+            top = np.clip(center_y - size // 2, 0, height - size)
+            left = np.clip(center_x - size // 2, 0, width - size)
+        else:
+            top = np.random.randint(0, height - size + 1)
+            left = np.random.randint(0, width - size + 1)
+
+        top = int(top)
+        left = int(left)
+
+        return {
+            "image": image[top:top + size, left:left + size],
+            "mask": mask[top:top + size, left:left + size],
+        }
+
+
+def get_train_transform(patch_size=512):
+    augmentation = A.Compose([
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.RandomRotate90(p=0.5),
+    ])
+
+    crop = ForegroundAwareCrop(
+        patch_size=patch_size,
+        foreground_prob=0.7,
+    )
+
+    def transform(image, mask):
+        cropped = crop(image=image, mask=mask)
+        return augmentation(**cropped)
+
+    return transform

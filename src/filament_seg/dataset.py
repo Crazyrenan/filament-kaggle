@@ -324,6 +324,7 @@ class SolarFilamentDataset:
         image = cv2.imread(str(self.image_dir / filename), cv2.IMREAD_GRAYSCALE)
         if image is None:
             raise OSError(f"Could not read image: {self.image_dir / filename}")
+        image = image.astype(np.float32) / 255.0
 
         mask = np.zeros(image.shape, dtype=np.uint8)
         image_id = self.images_by_filename[filename][0]["id"]
@@ -343,4 +344,4 @@ class SolarFilamentDataset:
             image = image.unsqueeze(0)
         if mask.ndim == 2:
             mask = mask.unsqueeze(0)
-        return {"image": image, "mask": mask}
+        return {"image": image, "mask": mask, "filename": filename, "image_id": image_id}
