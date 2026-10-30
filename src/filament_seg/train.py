@@ -1,10 +1,16 @@
+
 """Model training and validation loops with metric tracking and checkpointing."""
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+import torch
+
+from filament_seg.evaluate import compute_dice, compute_iou
 from filament_seg.utils import get_logger
 
 logger = get_logger(__name__)
@@ -18,101 +24,158 @@ def train_one_epoch(
     device: Any,
     scaler: Any | None = None,
 ) -> float:
-    """Execute a single training epoch across the dataset.
+    """Train the model for one epoch and return average batch loss."""
 
-    Args:
-        model: PyTorch nn.Module.
-        dataloader: PyTorch DataLoader supplying (images, masks).
-        criterion: Loss function callable.
-        optimizer: PyTorch optimizer.
-        device: Target execution device.
-        scaler: Optional torch.cuda.amp.GradScaler for mixed-precision.
-
-    Returns:
-        Average loss across all batches in the epoch.
-    """
-    import torch
-
+    device = torch.device(device)
     model.train()
+
     total_loss = 0.0
     batch_count = 0
 
+    use_amp = scaler is not None and device.type == "cuda"
+
     for batch in dataloader:
-        images = batch["image"].to(device)
-        masks = batch["mask"].to(device)
+        images = batch["image"].to(
+            device=device,
+            dtype=torch.float32,
+            non_blocking=True,
+        )
+        masks = batch["mask"].to(
+            device=device,
+            dtype=torch.float32,
+            non_blocking=True,
+        )
 
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)
 
-        if scaler is not None:
-            with torch.cuda.amp.autocast():
-                preds = model(images)
-                loss = criterion(preds, masks)
+        with torch.autocast(
+            device_type=device.type,
+            dtype=torch.float16 if device.type == "cuda" else torch.bfloat16,
+            enabled=use_amp,
+        ):
+            logits = model(images)
+            loss = criterion(logits, masks)
+
+        if not torch.isfinite(loss).item():
+            raise FloatingPointError(
+                f"Non-finite training loss: {loss.item()}"
+            )
+
+        if use_amp:
             scaler.scale(loss).backward()
             scaler.step(optimizer)
             scaler.update()
         else:
-            preds = model(images)
-            loss = criterion(preds, masks)
             loss.backward()
             optimizer.step()
 
-        total_loss += float(loss.item())
+        total_loss += loss.detach().item()
         batch_count += 1
 
-    return total_loss / max(batch_count, 1)
+    if batch_count == 0:
+        raise ValueError("Training DataLoader is empty.")
+
+    average_loss = total_loss / batch_count
+
+    logger.info(
+        "Training completed: batches=%d, loss=%.6f",
+        batch_count,
+        average_loss,
+    )
+
+    return average_loss
 
 
+@torch.inference_mode()
 def validate_one_epoch(
     model: Any,
     dataloader: Any,
     criterion: Any,
     device: Any,
 ) -> dict[str, float]:
-    """Evaluate model on the validation dataset.
+    """Evaluate foreground loss, Dice, and IoU on validation patches."""
 
-    Args:
-        model: PyTorch nn.Module.
-        dataloader: Validation PyTorch DataLoader.
-        criterion: Loss function callable.
-        device: Target execution device.
-
-    Returns:
-        Dictionary of validation metrics (loss, mean dice, mean iou).
-    """
-    import torch
-
-    from filament_seg.evaluate import compute_dice, compute_iou
-
+    device = torch.device(device)
     model.eval()
+
     total_loss = 0.0
-    ious: list[float] = []
-    dices: list[float] = []
     batch_count = 0
 
-    with torch.no_grad():
-        for batch in dataloader:
-            images = batch["image"].to(device)
-            masks = batch["mask"].to(device)
+    dices: list[float] = []
+    ious: list[float] = []
 
-            preds = model(images)
-            loss = criterion(preds, masks)
-            total_loss += float(loss.item())
-            batch_count += 1
+    for batch in dataloader:
+        images = batch["image"].to(
+            device=device,
+            dtype=torch.float32,
+            non_blocking=True,
+        )
+        masks = batch["mask"].to(
+            device=device,
+            dtype=torch.float32,
+            non_blocking=True,
+        )
 
-            probs = torch.sigmoid(preds).cpu().numpy()
-            targets = masks.cpu().numpy()
+        logits = model(images)
+        loss = criterion(logits, masks)
 
-            for p_arr, t_arr in zip(probs, targets):
-                p_bin = (p_arr > 0.5).astype(int)
-                t_bin = (t_arr > 0.5).astype(int)
-                ious.append(compute_iou(p_bin, t_bin))
-                dices.append(compute_dice(p_bin, t_bin))
+        if not torch.isfinite(loss).item():
+            raise FloatingPointError(
+                f"Non-finite validation loss: {loss.item()}"
+            )
 
-    return {
-        "val_loss": total_loss / max(batch_count, 1),
-        "val_iou": float(sum(ious) / max(len(ious), 1)),
-        "val_dice": float(sum(dices) / max(len(dices), 1)),
+        total_loss += loss.item()
+        batch_count += 1
+
+        probabilities = torch.sigmoid(logits)
+
+        predictions = (
+            probabilities >= 0.5
+        ).to(torch.uint8)
+
+        targets = (
+            masks > 0.5
+        ).to(torch.uint8)
+
+        predictions_np = predictions.cpu().numpy()
+        targets_np = targets.cpu().numpy()
+
+        for pred_mask, target_mask in zip(
+            predictions_np,
+            targets_np,
+        ):
+            pred_mask = np.squeeze(pred_mask)
+            target_mask = np.squeeze(target_mask)
+
+            dice = compute_dice(
+                pred_mask,
+                target_mask,
+            )
+            iou = compute_iou(
+                pred_mask,
+                target_mask,
+            )
+
+            dices.append(float(dice))
+            ious.append(float(iou))
+
+    if batch_count == 0:
+        raise ValueError("Validation DataLoader is empty.")
+
+    metrics = {
+        "val_loss": total_loss / batch_count,
+        "val_dice": float(np.mean(dices)),
+        "val_iou": float(np.mean(ious)),
     }
+
+    logger.info(
+        "Validation completed: loss=%.6f, Dice=%.6f, IoU=%.6f",
+        metrics["val_loss"],
+        metrics["val_dice"],
+        metrics["val_iou"],
+    )
+
+    return metrics
 
 
 def save_checkpoint(
@@ -120,21 +183,44 @@ def save_checkpoint(
     filepath: str | Path,
     is_best: bool = False,
 ) -> None:
-    """Persist model checkpoint to disk.
-
-    Args:
-        state: State dictionary containing model_state_dict, optimizer, epoch, etc.
-        filepath: Target checkpoint path.
-        is_best: If True, also save a copy to 'best_model.pth'.
-    """
-    import torch
+    """Save a checkpoint and optionally update the best-model checkpoint."""
 
     path = Path(filepath)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(state, path)
-    logger.info("Saved checkpoint to: %s", path)
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    temporary_path = path.with_name(
+        f"{path.name}.tmp"
+    )
+
+    try:
+        torch.save(state, temporary_path)
+        os.replace(temporary_path, path)
+    finally:
+        if temporary_path.exists():
+            temporary_path.unlink()
+
+    logger.info(
+        "Saved checkpoint to: %s",
+        path,
+    )
 
     if is_best:
         best_path = path.parent / "best_model.pth"
-        torch.save(state, best_path)
-        logger.info("Updated best model checkpoint at: %s", best_path)
+        best_temporary_path = best_path.with_name(
+            f"{best_path.name}.tmp"
+        )
+
+        try:
+            torch.save(state, best_temporary_path)
+            os.replace(best_temporary_path, best_path)
+        finally:
+            if best_temporary_path.exists():
+                best_temporary_path.unlink()
+
+        logger.info(
+            "Updated best model checkpoint at: %s",
+            best_path,
+        )

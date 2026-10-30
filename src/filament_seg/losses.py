@@ -39,17 +39,19 @@ class DiceLoss:
         """
         import torch
 
-        if self.from_logits:
-            pred = torch.sigmoid(pred)
+        if pred.ndim != 4 or pred.shape != target.shape or pred.shape[1] != 1:
+            raise ValueError("pred and target must have matching [B, 1, H, W] shapes")
+        if self.smooth <= 0:
+            raise ValueError("smooth must be positive")
 
-        pred_flat = pred.contiguous().view(-1)
-        target_flat = target.contiguous().view(-1)
-
-        intersection = (pred_flat * target_flat).sum()
-        denominator = pred_flat.sum() + target_flat.sum()
-
+        probabilities = torch.sigmoid(pred) if self.from_logits else pred
+        probabilities = probabilities.float().flatten(1)
+        targets = target.float().flatten(1)
+        intersection = (probabilities * targets).sum(dim=1)
+        denominator = probabilities.sum(dim=1) + targets.sum(dim=1)
         dice = (2.0 * intersection + self.smooth) / (denominator + self.smooth)
-        return 1.0 - dice
+        # An empty target approaches zero loss only when predictions are empty.
+        return (1.0 - dice).mean()
 
 
 class BCEDiceLoss:
@@ -64,6 +66,7 @@ class BCEDiceLoss:
         bce_weight: float = 0.5,
         dice_weight: float = 0.5,
         smooth: float = 1.0,
+        pos_weight: float | None = None,
     ) -> None:
         """Initialize BCEDiceLoss.
 
@@ -74,6 +77,9 @@ class BCEDiceLoss:
         """
         self.bce_weight = bce_weight
         self.dice_weight = dice_weight
+        if pos_weight is not None and pos_weight <= 0:
+            raise ValueError("pos_weight must be positive")
+        self.pos_weight = pos_weight
         self.dice_fn = DiceLoss(smooth=smooth, from_logits=True)
 
     def __call__(self, pred: Any, target: Any) -> Any:
@@ -89,8 +95,15 @@ class BCEDiceLoss:
         import torch
         import torch.nn.functional as F
 
+        if pred.ndim != 4 or pred.shape != target.shape or pred.shape[1] != 1:
+            raise ValueError("pred and target must have matching [B, 1, H, W] shapes")
         target_float = target.float()
-        bce = F.binary_cross_entropy_with_logits(pred, target_float)
+        positive_weight = (
+            pred.new_tensor(self.pos_weight) if self.pos_weight is not None else None
+        )
+        bce = F.binary_cross_entropy_with_logits(
+            pred, target_float, pos_weight=positive_weight
+        )
         dice = self.dice_fn(pred, target_float)
 
         return self.bce_weight * bce + self.dice_weight * dice

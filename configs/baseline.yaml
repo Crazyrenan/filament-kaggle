@@ -13,14 +13,14 @@ data:
 
 preprocessing:
   image_size: [512, 512]
-  in_channels: 3
+  in_channels: 1
   normalization: "minmax"  # options: minmax, percentile, standardize
 
 model:
   architecture: "Unet"
   encoder_name: "resnet34"
-  encoder_weights: "imagenet"
-  in_channels: 3
+  encoder_weights: null  # set only after explicitly caching ImageNet weights
+  in_channels: 1
   classes: 1
   activation: null  # returns raw logits for loss functions
 
@@ -34,6 +34,7 @@ training:
     bce_weight: 0.5
     dice_weight: 0.5
     smooth: 1.0
+    pos_weight: 30.0  # foreground is sparse in 512 px patches
   scheduler:
     name: "CosineAnnealingLR"
     t_max: 30

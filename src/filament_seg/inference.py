@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterator
 
 import numpy as np
 
@@ -71,6 +71,39 @@ def separate_instances_cc(
             current_id += 1
 
     return filtered_labeled, current_id - 1
+
+
+def iter_probability_instances(
+    probability_map: np.ndarray,
+    threshold: float = 0.5,
+    min_area: int = 50,
+    connectivity: int = 8,
+) -> Iterator[np.ndarray]:
+    """Yield binary masks for connected foreground components in scan order.
+
+    Touching filaments remain one component; this is only a baseline separator.
+    Each yielded mask retains the input resolution, including 2048 x 2048.
+    """
+    from scipy.ndimage import label
+
+    probabilities = np.asarray(probability_map)
+    if probabilities.ndim != 2 or not all(probabilities.shape) or not np.isfinite(probabilities).all():
+        raise ValueError("probability_map must be a finite 2D array")
+    if not 0 <= threshold <= 1 or not 0 <= probabilities.min() or probabilities.max() > 1:
+        raise ValueError("probabilities and threshold must be in [0, 1]")
+    if min_area < 1 or connectivity not in (4, 8):
+        raise ValueError("min_area must be positive and connectivity must be 4 or 8")
+
+    structure = (
+        np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=np.uint8)
+        if connectivity == 4
+        else np.ones((3, 3), dtype=np.uint8)
+    )
+    labels, count = label(probabilities >= threshold, structure=structure)
+    areas = np.bincount(labels.ravel(), minlength=count + 1)
+    for component_id in range(1, count + 1):
+        if areas[component_id] >= min_area:
+            yield (labels == component_id).astype(np.uint8)
 
 
 def separate_instances_watershed(

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from filament_seg.utils import get_logger
 
@@ -314,6 +314,38 @@ class SolarFilamentDataset:
 
     def __len__(self) -> int:
         return len(self.filenames)
+
+    def iter_instances(
+        self, idx: int, annotation_set_index: int = 0
+    ) -> Iterator[dict[str, Any]]:
+        """Yield one full-resolution mask per annotation in one selected set.
+
+        Alternative records for the same filename remain separate. Masks are
+        yielded lazily so callers need not retain every 2048-pixel mask.
+        """
+        import cv2
+        import numpy as np
+
+        filename = self.filenames[idx]
+        image_sets = self.images_by_filename[filename]
+        if not 0 <= annotation_set_index < len(image_sets):
+            raise IndexError("annotation_set_index is outside this image's alternatives")
+        image_record = image_sets[annotation_set_index]
+        image_id = image_record["id"]
+        shape = (image_record["height"], image_record["width"])
+        for annotation in self.annotations_by_image_id.get(image_id, []):
+            mask = np.zeros(shape, dtype=np.uint8)
+            for polygon in annotation["segmentation"]:
+                points = np.asarray(polygon, dtype=np.float32).reshape(-1, 2)
+                if len(points) >= 3:
+                    cv2.fillPoly(mask, [np.rint(points).astype(np.int32)], 1)
+            yield {
+                "mask": mask,
+                "annotation_id": annotation["id"],
+                "category_id": annotation["category_id"],
+                "image_id": image_id,
+                "filename": filename,
+            }
 
     def __getitem__(self, idx: int) -> dict[str, Any]:
         import cv2
