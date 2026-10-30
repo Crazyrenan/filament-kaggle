@@ -277,38 +277,70 @@ class DatasetInspector:
 
 
 class SolarFilamentDataset:
-    """PyTorch Dataset contract for Solar Filament segmentation.
-
-    This interface provides the signature contract for Stage A baseline.
-    Implementation requires concrete knowledge of dataset schema after inspection.
-    """
+    """Load physical MAGFiLO images and their COCO polygon annotations."""
 
     def __init__(
         self,
-        image_paths: list[str | Path],
-        mask_paths: list[str | Path] | None = None,
+        image_dir: str | Path,
+        annotation_path: str | Path,
         transform: Any | None = None,
+        annotation_policy: str = "first",
     ) -> None:
-        """Initialize dataset with image and optional mask paths.
+        if annotation_policy != "first":
+            raise ValueError("annotation_policy must be 'first'")
 
-        Args:
-            image_paths: List of paths to input astronomical images.
-            mask_paths: Optional list of corresponding ground-truth mask paths.
-            transform: Optional Albumentations or torchvision transform.
-        """
-        self.image_paths = [Path(p) for p in image_paths]
-        self.mask_paths = [Path(p) for p in mask_paths] if mask_paths else None
+        self.image_dir = Path(image_dir)
+        self.annotation_path = Path(annotation_path)
         self.transform = transform
+        self.annotation_policy = annotation_policy
+
+        with self.annotation_path.open("r", encoding="utf-8") as annotation_file:
+            coco = json.load(annotation_file)
+
+        self.images_by_filename: dict[str, list[dict[str, Any]]] = {}
+        for image in coco["images"]:
+            self.images_by_filename.setdefault(image["file_name"], []).append(image)
+
+        self.filenames = list(self.images_by_filename)
+        self.annotations_by_image_id: dict[str, list[dict[str, Any]]] = {}
+        for annotation in coco["annotations"]:
+            self.annotations_by_image_id.setdefault(annotation["image_id"], []).append(
+                annotation
+            )
+
+        missing = [name for name in self.filenames if not (self.image_dir / name).is_file()]
+        if missing:
+            raise FileNotFoundError(f"Missing {len(missing)} annotated images; first: {missing[0]}")
 
     def __len__(self) -> int:
-        return len(self.image_paths)
+        return len(self.filenames)
 
     def __getitem__(self, idx: int) -> dict[str, Any]:
-        """Fetch image and target mask.
+        import cv2
+        import numpy as np
+        import torch
 
-        To be fully activated once competition dataset structure is determined.
-        """
-        raise NotImplementedError(
-            "SolarFilamentDataset.__getitem__ will be implemented following Section 4 "
-            "dataset structure confirmation (Stage A)."
-        )
+        filename = self.filenames[idx]
+        image = cv2.imread(str(self.image_dir / filename), cv2.IMREAD_GRAYSCALE)
+        if image is None:
+            raise OSError(f"Could not read image: {self.image_dir / filename}")
+
+        mask = np.zeros(image.shape, dtype=np.uint8)
+        image_id = self.images_by_filename[filename][0]["id"]
+        for annotation in self.annotations_by_image_id.get(image_id, []):
+            for polygon in annotation["segmentation"]:
+                points = np.asarray(polygon, dtype=np.float32).reshape(-1, 2)
+                if len(points) >= 3:
+                    cv2.fillPoly(mask, [np.rint(points).astype(np.int32)], 1)
+
+        if self.transform is not None:
+            transformed = self.transform(image=image, mask=mask)
+            image, mask = transformed["image"], transformed["mask"]
+
+        image = torch.as_tensor(np.asarray(image), dtype=torch.float32)
+        mask = torch.as_tensor(np.asarray(mask), dtype=torch.float32)
+        if image.ndim == 2:
+            image = image.unsqueeze(0)
+        if mask.ndim == 2:
+            mask = mask.unsqueeze(0)
+        return {"image": image, "mask": mask}
