@@ -16,7 +16,7 @@ def predict_probability_map(
     image_tensor: Any,
     device: Any,
 ) -> np.ndarray:
-    """Run model forward pass to compute probability map.
+    """Run model forward pass to compute probability map on a single tensor.
 
     Args:
         model: Trained PyTorch segmentation model.
@@ -34,11 +34,158 @@ def predict_probability_map(
 
     image_tensor = image_tensor.to(device)
     with torch.no_grad():
-        logits = model(image_tensor)
-        probs = torch.sigmoid(logits)
-        prob_map = probs.squeeze().cpu().numpy()
+        with torch.amp.autocast(device_type=torch.device(device).type, enabled=torch.device(device).type == "cuda"):
+            logits = model(image_tensor)
+            probs = torch.sigmoid(logits)
+            prob_map = probs.squeeze().cpu().numpy()
 
     return prob_map.astype(np.float32)
+
+
+def predict_tiled(
+    model: Any,
+    image: Any,
+    tile_size: int = 512,
+    overlap: int = 128,
+    device: Any = "cuda",
+    batch_size: int = 4,
+) -> np.ndarray:
+    """Run full-resolution tiled inference with Hann window blending.
+
+    Eliminates patch boundary and seam artifacts by weighting overlapping
+    predictions with a 2D Hann/cosine tapering window.
+
+    Args:
+        model: Trained PyTorch segmentation model.
+        image: Input image as torch.Tensor (1, 1, H, W) or (1, H, W) or (H, W),
+            or NumPy array (H, W). Normalized to [0, 1].
+        tile_size: Height and width of square tiles. Default is 512.
+        overlap: Pixel overlap between adjacent tiles. Default is 128.
+        device: Execution device (e.g. 'cuda' or 'cpu').
+        batch_size: Batch size of tiles processed simultaneously on GPU.
+
+    Returns:
+        Reconstructed 2D float32 probability map of shape (H, W) in [0.0, 1.0].
+    """
+    import torch
+    import torch.nn.functional as F
+
+    dev = torch.device(device)
+    model.eval()
+
+    # Convert to standard 4D tensor (1, 1, H, W)
+    if isinstance(image, np.ndarray):
+        arr = image.astype(np.float32)
+        if arr.ndim == 2:
+            arr = arr[np.newaxis, np.newaxis, ...]
+        elif arr.ndim == 3:
+            arr = arr[np.newaxis, ...]
+        tensor = torch.from_numpy(arr).to(dev)
+    elif isinstance(image, torch.Tensor):
+        tensor = image.to(dev, dtype=torch.float32)
+        if tensor.ndim == 2:
+            tensor = tensor.unsqueeze(0).unsqueeze(0)
+        elif tensor.ndim == 3:
+            tensor = tensor.unsqueeze(0)
+    else:
+        raise TypeError(f"Unsupported image type: {type(image)}")
+
+    H, W = tensor.shape[2], tensor.shape[3]
+    stride = tile_size - overlap
+    if stride <= 0:
+        raise ValueError("tile_size must be strictly greater than overlap")
+
+    # Construct 2D Hann window for smooth cosine taper blending
+    hann_1d = np.hanning(tile_size).astype(np.float32)
+    # Floor window at 1e-3 to prevent zero division near patch boundaries
+    window_2d = np.outer(hann_1d, hann_1d)
+    window_2d = np.maximum(window_2d, 1e-3)
+    window_tensor = torch.from_numpy(window_2d).to(device=dev, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+
+    # Calculate padding to ensure all edge regions are fully covered by tiles
+    pad_h = (stride - ((H - tile_size) % stride)) % stride if H > tile_size else max(0, tile_size - H)
+    pad_w = (stride - ((W - tile_size) % stride)) % stride if W > tile_size else max(0, tile_size - W)
+
+    padded = F.pad(tensor, (0, pad_w, 0, pad_h), mode="reflect")
+    pad_H, pad_W = padded.shape[2], padded.shape[3]
+
+    prob_accum = torch.zeros((1, 1, pad_H, pad_W), device=dev, dtype=torch.float32)
+    weight_accum = torch.zeros((1, 1, pad_H, pad_W), device=dev, dtype=torch.float32)
+
+    y_coords = list(range(0, pad_H - tile_size + 1, stride))
+    x_coords = list(range(0, pad_W - tile_size + 1, stride))
+
+    tile_coords = [(y, x) for y in y_coords for x in x_coords]
+
+    use_amp = dev.type == "cuda"
+    with torch.no_grad():
+        for batch_start in range(0, len(tile_coords), batch_size):
+            batch_indices = tile_coords[batch_start : batch_start + batch_size]
+            batch_tiles = torch.cat(
+                [padded[:, :, y : y + tile_size, x : x + tile_size] for y, x in batch_indices],
+                dim=0,
+            )
+
+            with torch.amp.autocast(device_type=dev.type, enabled=use_amp):
+                logits = model(batch_tiles)
+                probs = torch.sigmoid(logits)
+
+            for i, (y, x) in enumerate(batch_indices):
+                prob_accum[:, :, y : y + tile_size, x : x + tile_size] += probs[i : i + 1] * window_tensor
+                weight_accum[:, :, y : y + tile_size, x : x + tile_size] += window_tensor
+
+    blended = prob_accum / torch.clamp(weight_accum, min=1e-6)
+    result = blended[:, :, :H, :W].squeeze().cpu().numpy()
+    return result.astype(np.float32)
+
+
+def predict_full_resolution(
+    model: Any,
+    image: Any,
+    device: Any = "cuda",
+    use_tiled: bool = True,
+    tile_size: int = 512,
+    overlap: int = 128,
+    batch_size: int = 4,
+) -> np.ndarray:
+    """Predict continuous probability map for an image at native resolution.
+
+    Args:
+        model: Trained segmentation model.
+        image: Single image array or tensor.
+        device: Target execution device.
+        use_tiled: Whether to use tiled inference with Hann window blending.
+        tile_size: Size of square tiles if tiled.
+        overlap: Tile overlap in pixels if tiled.
+        batch_size: Batch size of tiles processed in parallel.
+
+    Returns:
+        Float32 probability map of shape (H, W) in [0.0, 1.0].
+    """
+    if use_tiled:
+        return predict_tiled(
+            model=model,
+            image=image,
+            tile_size=tile_size,
+            overlap=overlap,
+            device=device,
+            batch_size=batch_size,
+        )
+
+    # Direct full image prediction
+    import torch
+
+    dev = torch.device(device)
+    if isinstance(image, np.ndarray):
+        arr = image.astype(np.float32)
+        if arr.ndim == 2:
+            arr = arr[np.newaxis, np.newaxis, ...]
+        elif arr.ndim == 3:
+            arr = arr[np.newaxis, ...]
+        tensor = torch.from_numpy(arr)
+    else:
+        tensor = image
+    return predict_probability_map(model, tensor, dev)
 
 
 def separate_instances_cc(
@@ -61,7 +208,6 @@ def separate_instances_cc(
     if num_features == 0:
         return np.zeros_like(binary_mask, dtype=np.int32), 0
 
-    # Filter small components
     filtered_labeled = np.zeros_like(labeled, dtype=np.int32)
     current_id = 1
     for instance_id in range(1, num_features + 1):
@@ -81,8 +227,17 @@ def iter_probability_instances(
 ) -> Iterator[np.ndarray]:
     """Yield binary masks for connected foreground components in scan order.
 
-    Touching filaments remain one component; this is only a baseline separator.
-    Each yielded mask retains the input resolution, including 2048 x 2048.
+    Touching filaments remain one component; this is a reliable baseline separator.
+    Each yielded mask retains the input resolution (e.g. 2048 x 2048).
+
+    Args:
+        probability_map: 2D array of predicted foreground probabilities in [0, 1].
+        threshold: Binarization decision threshold.
+        min_area: Minimum pixel count per instance. Smaller components are dropped.
+        connectivity: Pixel neighborhood connectivity (4 or 8).
+
+    Yields:
+        Binary 2D numpy array of shape (H, W) and dtype np.uint8 for each instance.
     """
     from scipy.ndimage import label
 
@@ -100,6 +255,9 @@ def iter_probability_instances(
         else np.ones((3, 3), dtype=np.uint8)
     )
     labels, count = label(probabilities >= threshold, structure=structure)
+    if count == 0:
+        return
+
     areas = np.bincount(labels.ravel(), minlength=count + 1)
     for component_id in range(1, count + 1):
         if areas[component_id] >= min_area:
@@ -126,23 +284,17 @@ def separate_instances_watershed(
     from scipy.ndimage import distance_transform_edt, label
     from skimage.segmentation import watershed
 
-    # 1. Mask representing the full filament extent
     extent_mask = probability_map >= mask_threshold
 
-    # 2. Seed cores with high confidence
     core_mask = probability_map >= core_threshold
     markers, num_markers = label(core_mask)
 
     if num_markers == 0:
         return separate_instances_cc(extent_mask.astype(np.uint8), min_area=min_area)
 
-    # 3. Distance transform on extent mask
     distance = distance_transform_edt(extent_mask)
-
-    # 4. Watershed guided by negative distance transform and seeds
     labels = watershed(-distance, markers, mask=extent_mask)
 
-    # 5. Filter out instances smaller than min_area
     filtered_labels = np.zeros_like(labels, dtype=np.int32)
     next_id = 1
     for inst_id in np.unique(labels):
@@ -156,11 +308,44 @@ def separate_instances_watershed(
     return filtered_labels, next_id - 1
 
 
+def postprocess_binary_mask(
+    mask: np.ndarray,
+    fill_holes: bool = True,
+    close_kernel_size: int = 0,
+) -> np.ndarray:
+    """Apply non-destructive morphological refinement to a binary mask.
+
+    Fills internal cavities without eroding fine, thin filament tips.
+
+    Args:
+        mask: 2D binary mask array.
+        fill_holes: Whether to fill interior background holes.
+        close_kernel_size: Optional morphological closing kernel size (0 to disable).
+
+    Returns:
+        Refined binary mask.
+    """
+    from scipy.ndimage import binary_fill_holes
+    import cv2
+
+    result = mask.astype(bool)
+    if fill_holes:
+        result = binary_fill_holes(result)
+
+    result_uint8 = result.astype(np.uint8)
+    if close_kernel_size > 0:
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (close_kernel_size, close_kernel_size))
+        result_uint8 = cv2.morphologyEx(result_uint8, cv2.MORPH_CLOSE, kernel)
+
+    return result_uint8
+
+
 def mask_to_rle(mask: np.ndarray) -> str:
-    """Run-length encode a binary mask (standard Kaggle format).
+    """Run-length encode a binary mask (standard legacy Kaggle format).
 
     Flattens the mask in column-major (Fortran) order.
     Returns space-delimited string of 1-based (start, length) pairs.
+    Note: For official competition submissions, use encode_coco_counts from submission.py.
 
     Args:
         mask: 2D binary array (1 for foreground, 0 for background).
