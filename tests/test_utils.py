@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 
-from filament_seg.utils import get_device, get_logger, load_config, save_config, set_seed
+from filament_seg.utils import get_device, get_logger, load_config, project_path, project_root, save_config, set_seed
 
 
 def test_set_seed():
@@ -35,3 +35,11 @@ def test_get_logger():
 def test_get_device():
     dev = get_device("cpu")
     assert "cpu" in str(dev)
+
+
+def test_project_paths_independent_of_working_directory(monkeypatch, tmp_path):
+    expected = project_root()
+    monkeypatch.chdir(tmp_path)
+    assert project_root() == expected
+    assert project_path("checkpoints/unet_resnet34_v2/latest.pth") == expected / "checkpoints/unet_resnet34_v2/latest.pth"
+    assert project_path(tmp_path / "model.pth") == tmp_path / "model.pth"

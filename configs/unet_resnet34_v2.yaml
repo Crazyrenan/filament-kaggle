@@ -44,7 +44,7 @@ training:
   clip_grad_norm: 1.0
   early_stopping_patience: 7
   checkpoint_dir: "checkpoints/unet_resnet34_v2"
-  selection_metric: "val_dice_full"  # Full-resolution tiled validation metric
+  selection_metric: "val_dice_patch"  # Current trainer selects best weights using 512 px validation Dice
 
 evaluation:
   tile_size: 512

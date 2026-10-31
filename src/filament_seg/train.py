@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import time
+from uuid import uuid4
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +15,7 @@ from torch.utils.data import DataLoader, Subset
 from filament_seg.evaluate import compute_dice, compute_iou, evaluate_full_resolution_dataset
 from filament_seg.losses import BCEDiceLoss
 from filament_seg.model import build_model
-from filament_seg.utils import get_logger
+from filament_seg.utils import get_logger, project_path
 
 logger = get_logger(__name__)
 
@@ -313,8 +314,8 @@ def train_v2_model(
     """
     dev = torch.device(device)
     train_cfg = config.get("training", {})
-    total_epochs = max_epochs or train_cfg.get("epochs", 30)
-    ckpt_dir = Path(train_cfg.get("checkpoint_dir", "checkpoints/unet_resnet34_v2"))
+    total_epochs = max_epochs if max_epochs is not None else train_cfg.get("epochs", 30)
+    ckpt_dir = project_path(train_cfg.get("checkpoint_dir", "checkpoints/unet_resnet34_v2"))
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     latest_ckpt_path = ckpt_dir / "latest.pth"
     best_ckpt_path = ckpt_dir / "best_model.pth"
@@ -389,11 +390,14 @@ def train_v2_model(
             "optimizer_state_dict": optimizer.state_dict(),
             "scheduler_state_dict": scheduler.state_dict(),
             "scaler_state_dict": scaler.state_dict(),
-            "best_val_dice": 0.5,
+            "best_val_dice": 0.0,
             "history": [{"epoch": 0, "smoke_test": True}],
             "epochs_without_improvement": 0,
+            "purpose": "smoke_test",
+            "experiment_name": config.get("project", {}).get("experiment_name"),
+            "model_config": config.get("model", {}).copy(),
         }
-        smoke_path = ckpt_dir / "smoke_checkpoint.pth"
+        smoke_path = ckpt_dir / "smoke_runs" / f"smoke_{uuid4().hex}.pth"
         assert smoke_path.resolve() != latest_ckpt_path.resolve(), "Smoke checkpoint must not overwrite latest.pth"
         assert smoke_path.resolve() != best_ckpt_path.resolve(), "Smoke checkpoint must not overwrite best_model.pth"
         save_checkpoint(smoke_state, smoke_path, is_best=False)
@@ -425,6 +429,14 @@ def train_v2_model(
                 scaler=scaler,
                 map_location=dev,
             )
+            if checkpoint.get("purpose") == "smoke_test" or any(
+                record.get("smoke_test") for record in checkpoint.get("history", [])
+            ):
+                raise ValueError(f"Refusing to resume full training from smoke weights: {latest_ckpt_path}")
+            recorded_experiment = checkpoint.get("experiment_name")
+            expected_experiment = config.get("project", {}).get("experiment_name")
+            if recorded_experiment and recorded_experiment != expected_experiment:
+                raise ValueError(f"Checkpoint experiment mismatch: {recorded_experiment} != {expected_experiment}")
             start_epoch = checkpoint.get("epoch", 0) + 1
             best_val_dice = checkpoint.get("best_val_dice", 0.0)
             epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
@@ -441,11 +453,26 @@ def train_v2_model(
                 latest_ckpt_path,
             )
     else:
+        if latest_ckpt_path.exists() or best_ckpt_path.exists():
+            raise FileExistsError(
+                f"Fresh training would overwrite existing weights in {ckpt_dir}; use a new checkpoint_dir"
+            )
         logger.info(
             "Initializing fresh training run with ImageNet-pretrained ResNet34 encoder from epoch 1 (resume=False)."
         )
 
     # Full training loop
+    if start_epoch > total_epochs:
+        logger.info("Training already completed at epoch %d (configured maximum %d).", start_epoch - 1, total_epochs)
+        return {
+            "status": "already_completed",
+            "model": model,
+            "best_val_dice": best_val_dice,
+            "history": history,
+            "best_checkpoint": str(best_ckpt_path),
+            "latest_checkpoint": str(latest_ckpt_path),
+        }
+
     logger.info("Starting training from epoch %d to %d...", start_epoch, total_epochs)
     for epoch in range(start_epoch, total_epochs + 1):
         t0 = time.time()
@@ -492,6 +519,10 @@ def train_v2_model(
             "best_val_dice": best_val_dice,
             "history": history,
             "epochs_without_improvement": epochs_without_improvement,
+            "purpose": "full_training",
+            "experiment_name": config.get("project", {}).get("experiment_name"),
+            "model_config": config.get("model", {}).copy(),
+            "checkpoint_dir": str(ckpt_dir),
         }
         save_checkpoint(state, latest_ckpt_path, is_best=is_best)
 

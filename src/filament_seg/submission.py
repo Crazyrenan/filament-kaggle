@@ -112,6 +112,11 @@ def generate_submission(
 
     rows: list[dict[str, str]] = []
     test_paths = [Path(p) for p in test_images]
+    stems = [path.stem for path in test_paths]
+    if len(stems) != len(set(stems)):
+        raise ValueError("Test image stems must be unique")
+    if output_csv_path is not None and Path(output_csv_path).exists():
+        raise FileExistsError(f"Refusing to overwrite existing submission: {output_csv_path}")
 
     logger.info("Generating predictions for %d test images...", len(test_paths))
 
@@ -151,7 +156,7 @@ def generate_submission(
     if output_csv_path:
         out_p = Path(output_csv_path)
         out_p.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(out_p, index=False)
+        df.to_csv(out_p, index=False, mode="x")
         logger.info("Saved submission CSV to %s", out_p)
 
     return df

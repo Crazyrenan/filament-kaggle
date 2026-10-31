@@ -171,7 +171,8 @@ def diagnostic_panoptic_quality(
     predictions: list[np.ndarray],
     iou_threshold: float = 0.5,
     inclusive: bool = False,
-) -> dict[str, float | int]:
+    return_details: bool = False,
+) -> dict[str, Any]:
     """Match individual binary masks and compute diagnostic PQ, SQ, and RQ.
 
     Matching uses linear sum assignment maximizing valid IoU matches, with strict
@@ -183,9 +184,10 @@ def diagnostic_panoptic_quality(
         predictions: List of 2D binary predicted instance masks.
         iou_threshold: Minimum IoU required for an eligible match. Default 0.5.
         inclusive: If True, uses IoU >= threshold. Default is False (> threshold).
+        return_details: Include matched GT/prediction indices, IoUs, and unmatched indices.
 
     Returns:
-        Dictionary with pq, sq, rq, tp, fp, fn.
+        Dictionary with pq, sq, rq, tp, fp, fn, and optional matching details.
     """
     from scipy.optimize import linear_sum_assignment
 
@@ -194,8 +196,9 @@ def diagnostic_panoptic_quality(
 
     # Validate and filter ground truth instances
     valid_gt: list[np.ndarray] = []
+    gt_indices: list[int] = []
     shape = None
-    for mask in ground_truth:
+    for original_index, mask in enumerate(ground_truth):
         arr = np.asarray(mask)
         if arr.ndim != 2 or arr.size == 0:
             raise ValueError("ground truth instances must be nonempty 2D arrays")
@@ -205,10 +208,12 @@ def diagnostic_panoptic_quality(
             raise ValueError(f"instances must share shape {shape}, got {arr.shape}")
         if arr.any():
             valid_gt.append(arr.astype(bool, copy=False))
+            gt_indices.append(original_index)
 
     # Validate and filter prediction instances (gracefully ignore all-zero prediction masks)
     valid_preds: list[np.ndarray] = []
-    for mask in predictions:
+    pred_indices: list[int] = []
+    for original_index, mask in enumerate(predictions):
         arr = np.asarray(mask)
         if arr.ndim != 2 or arr.size == 0:
             continue
@@ -218,23 +223,25 @@ def diagnostic_panoptic_quality(
             shape = arr.shape
         if arr.any():
             valid_preds.append(arr.astype(bool, copy=False))
+            pred_indices.append(original_index)
 
     n_gt = len(valid_gt)
     n_pred = len(valid_preds)
 
     # Both empty: perfect diagnosis
     if n_gt == 0 and n_pred == 0:
-        return {"pq": 1.0, "sq": 1.0, "rq": 1.0, "tp": 0, "fp": 0, "fn": 0}
+        result = {"pq": 1.0, "sq": 1.0, "rq": 1.0, "tp": 0, "fp": 0, "fn": 0}
+        return {**result, "matches": [], "unmatched_gt": [], "unmatched_pred": []} if return_details else result
 
     # Ground truth empty, but predictions made: all false positives
     if n_gt == 0 and n_pred > 0:
-        denominator = 0.5 * n_pred
-        return {"pq": 0.0, "sq": 0.0, "rq": 0.0, "tp": 0, "fp": n_pred, "fn": 0}
+        result = {"pq": 0.0, "sq": 0.0, "rq": 0.0, "tp": 0, "fp": n_pred, "fn": 0}
+        return {**result, "matches": [], "unmatched_gt": [], "unmatched_pred": pred_indices} if return_details else result
 
     # Predictions empty, but ground truth exists: all false negatives
     if n_gt > 0 and n_pred == 0:
-        denominator = 0.5 * n_gt
-        return {"pq": 0.0, "sq": 0.0, "rq": 0.0, "tp": 0, "fp": 0, "fn": n_gt}
+        result = {"pq": 0.0, "sq": 0.0, "rq": 0.0, "tp": 0, "fp": 0, "fn": n_gt}
+        return {**result, "matches": [], "unmatched_gt": gt_indices, "unmatched_pred": []} if return_details else result
 
     # Compute pairwise IoU matrix
     ious = np.zeros((n_gt, n_pred), dtype=np.float64)
@@ -250,26 +257,36 @@ def diagnostic_panoptic_quality(
     scores[:n_gt, :n_pred] = np.where(eligible, 1.0 + ious, -1.0)
     rows, columns = linear_sum_assignment(scores, maximize=True)
 
-    matched_iou = sum(
-        ious[row, column]
-        for row, column in zip(rows, columns)
+    matched_pairs = [
+        (row, column) for row, column in zip(rows, columns)
         if row < n_gt and column < n_pred and eligible[row, column]
-    )
-    tp = sum(
-        row < n_gt and column < n_pred and eligible[row, column]
-        for row, column in zip(rows, columns)
-    )
+    ]
+    matched_iou = sum(ious[row, column] for row, column in matched_pairs)
+    tp = len(matched_pairs)
     fp = n_pred - tp
     fn = n_gt - tp
     denominator = tp + 0.5 * fp + 0.5 * fn
 
-    return {
+    result = {
         "pq": float(matched_iou / denominator) if denominator > 0 else 1.0,
         "sq": float(matched_iou / tp) if tp > 0 else 0.0,
         "rq": float(tp / denominator) if denominator > 0 else 1.0,
         "tp": int(tp),
         "fp": int(fp),
         "fn": int(fn),
+    }
+    if not return_details:
+        return result
+    matched_gt = {row for row, _ in matched_pairs}
+    matched_pred = {column for _, column in matched_pairs}
+    return {
+        **result,
+        "matches": [
+            {"gt_index": gt_indices[row], "pred_index": pred_indices[column], "iou": float(ious[row, column])}
+            for row, column in matched_pairs
+        ],
+        "unmatched_gt": [gt_indices[row] for row in range(n_gt) if row not in matched_gt],
+        "unmatched_pred": [pred_indices[column] for column in range(n_pred) if column not in matched_pred],
     }
 
 

@@ -21,9 +21,10 @@ from filament_seg.inference import (
 )
 from filament_seg.model import build_model
 from filament_seg.train import load_checkpoint
+from filament_seg.utils import project_root
 
 def main():
-    root = Path('.').resolve()
+    root = project_root()
     train_dir = root / "data/filament-segmentation-2026/MAGFiLO_1.0_Kaggle_2026/train"
     image_dir = train_dir / "train_images"
     json_path = train_dir / "MAGFiLO_1.0_Annotations_kaggle2026_train.json"
@@ -31,6 +32,9 @@ def main():
     
     reports_dir = root / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
+    for name in ("validation_detailed_metrics.csv", "validation_experiments_summary.json"):
+        if (reports_dir / name).exists():
+            raise FileExistsError(f"Historical validation output exists: {reports_dir / name}")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -262,7 +266,7 @@ def main():
         
     df_detailed = pd.DataFrame(detailed_records)
     csv_path = reports_dir / "validation_detailed_metrics.csv"
-    df_detailed.to_csv(csv_path, index=False)
+    df_detailed.to_csv(csv_path, index=False, mode="x")
     print(f"Saved detailed per-image validation results to {csv_path}")
     
     # Save complete JSON summary
@@ -287,7 +291,7 @@ def main():
     }
     
     json_path = reports_dir / "validation_experiments_summary.json"
-    with open(json_path, "w", encoding="utf-8") as f:
+    with open(json_path, "x", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
     print(f"Saved experiment summary to {json_path}")
 

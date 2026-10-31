@@ -87,8 +87,10 @@ def test_smoke_test_isolation_and_no_overwrite(dummy_loaders, base_config, tmp_p
     )
 
     assert res["status"] == "smoke_test_passed"
-    smoke_ckpt = ckpt_dir / "smoke_checkpoint.pth"
+    smoke_ckpt = Path(res["checkpoint"])
     assert smoke_ckpt.is_file()
+    assert smoke_ckpt.parent == ckpt_dir / "smoke_runs"
+    assert torch.load(smoke_ckpt, weights_only=False)["purpose"] == "smoke_test"
 
     # Verify latest.pth and best_model.pth were completely untouched
     loaded_latest = torch.load(latest_pth)
@@ -189,6 +191,30 @@ def test_genuine_resumption_restores_all_training_components(dummy_loaders, base
     assert loaded["history"][0]["epoch"] == 1
     assert loaded["history"][1]["epoch"] == 2
     assert loaded["history"][2]["epoch"] == 3
+
+
+def test_completed_resume_does_not_train_or_replace_checkpoint(dummy_loaders, base_config):
+    train_loader, val_loader, val_ds = dummy_loaders
+    ckpt_dir = Path(base_config["training"]["checkpoint_dir"])
+    ckpt_dir.mkdir(parents=True)
+    model = build_model(pretrained=False, in_channels=1, classes=1)
+    latest = ckpt_dir / "latest.pth"
+    torch.save({"epoch": 2, "model_state_dict": model.state_dict(), "best_val_dice": 0.7, "history": []}, latest)
+    before = latest.read_bytes()
+    result = train_v2_model(base_config, train_loader, val_loader, val_ds, [0, 1], device="cpu", resume=True)
+    assert result["status"] == "already_completed"
+    assert latest.read_bytes() == before
+
+
+def test_fresh_training_refuses_existing_weights(dummy_loaders, base_config):
+    train_loader, val_loader, val_ds = dummy_loaders
+    ckpt_dir = Path(base_config["training"]["checkpoint_dir"])
+    ckpt_dir.mkdir(parents=True)
+    best = ckpt_dir / "best_model.pth"
+    best.write_bytes(b"preserve")
+    with pytest.raises(FileExistsError):
+        train_v2_model(base_config, train_loader, val_loader, val_ds, [0, 1], device="cpu", resume=False)
+    assert best.read_bytes() == b"preserve"
 
 
 def test_load_checkpoint_restores_parameters_and_states(tmp_path):

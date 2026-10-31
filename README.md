@@ -1,155 +1,48 @@
-# Solar Filament Instance Segmentation
+# Solar Filament Segmentation
 
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+A reproducible PyTorch baseline for the [Kaggle Solar Filament Segmentation Challenge 2026](https://www.kaggle.com/competitions/filament-segmentation-2026/overview/leaderboard-ranking). The competition asks for **one instance mask per filament**. This repository trains a one-channel U-Net/ResNet34 foreground model, separates connected components as a baseline, computes **diagnostic** PQ, and encodes masks as compressed COCO RLE. The local evaluator has not been proven identical to the organizer's scorer; see [competition target audit](reports/competition_target_audit.md).
 
-An end-to-end deep learning and scientific computer-vision pipeline for automated detection and instance segmentation of solar filaments in astronomical solar observations. Built for the **Kaggle Solar Filament Segmentation Challenge 2026**.
+## Data and environment
 
----
+The local MAGFiLO training set has 707 physical JPEGs, 1,154 COCO image records, and 8,199 annotation records. Multiple records for a filename represent alternative annotation sets. `SolarFilamentDataset` groups by physical filename; the seed-42 split has 565 training and 142 validation images with no exact filename overlap. Thirteen validation filenames share a capture date with a training filename, so the random-image split is not a temporal holdout. Raw data and checkpoints are ignored by Git.
 
-## 1. Scientific Context
+Use Python 3.11 and the dependencies in `environment.yml` or `requirements.txt`. On this Windows checkout, the tested interpreter is `.conda\python.exe`:
 
-Solar filaments are massive ribbons of dense, cool plasma suspended within the intensely hot solar corona by magnetic flux ropes. When observed against the solar disk in monochromatic spectral lines (most prominently Hydrogen-alpha, $\text{H}\alpha$ at $656.28\text{ nm}$), they appear as dark, elongated absorption structures due to scattering. When projected beyond the solar limb against the darkness of space, these identical structures appear bright and are termed **solar prominences**.
-
-```text
-       Solar Corona (~1,000,000 K)
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        \    Helical Magnetic Flux Rope    /
-         \     Cool Plasma (~10,000 K)    /
-   ============================================  <- Solar Chromosphere
-                     Solar Disk
+```powershell
+& '.\.conda\python.exe' -m pip install -e .
+& '.\.conda\python.exe' -m pytest -q
 ```
 
-### Why Automated Segmentation Matters
+The canonical notebooks assert this interpreter and resolve the project root from either the repository root or `notebooks/` working directory. For a new environment, register an ipykernel pointing to that environment and update the notebooks' kernel selection if its name differs.
 
-1. **Space Weather Forecasting:** Filaments represent unstable magnetic equilibria. Their eruption frequently triggers Coronal Mass Ejections (CMEs) that propagate through interplanetary space, driving geomagnetic storms on Earth that disrupt satellite communications, GPS navigation, and terrestrial power grids.
-2. **Morphological Characterization:** Manual tracing of filament spine coordinates, chirality, and footprint areas across terabytes of continuous full-disk solar observatory surveys (e.g., SDO/AIA, GONG, NVST, CHASE) is infeasible.
-3. **Instance Separation Challenge:** Solar filaments frequently overlap, bifurcate, or appear fragmented across complex chromospheric backgrounds with intense active-region fibrils and sunspots. Converting semantic masks into verified physical instances requires robust, boundary-aware computer vision.
+## Canonical workflow
 
----
+| Order | Notebook | Purpose |
+|---|---|---|
+| 1 | [`01_eda.ipynb`](notebooks/01_eda.ipynb) | Data inventory, polygons, annotators, intensity, crop bias, split checks, representative masks |
+| 2 | [`02_training.ipynb`](notebooks/02_training.ipynb) | Pre-training checks; opt-in smoke/full training; checkpoint and history review |
+| 3 | [`04_instance_error_analysis.ipynb`](notebooks/04_instance_error_analysis.ipynb) | Trained-v2 instance matches, TP/FP/FN, qualitative overlays |
+| 4 | [`05_postprocessing_optimization.ipynb`](notebooks/05_postprocessing_optimization.ipynb) | Cache full-resolution probability maps and compare threshold/area on disjoint tuning and holdout subsets |
+| 5 | [`03_submission.ipynb`](notebooks/03_submission.ipynb) | Independently load trained weights, preview inference, opt-in full-test CSV generation |
 
-## 2. Architecture & Repository Structure
+Run cells in order within each notebook. `RUN_SMOKE_TEST`, `RUN_FULL_TRAINING`, `RUN_POST_TRAINING_EVAL`, `RUN_MODEL_COMPARISON`, and `RUN_SUBMISSION` default to `False`. Pretrained ImageNet encoder initialization is not a trained checkpoint. The two research notebooks run bounded samples by default; their subset scores are **not** full-validation benchmarks. Increase the selected validation indices deliberately and preserve a holdout before selecting final parameters. No notebook starts a full training run by default.
 
-The repository is structured as a modular, installable Python package (`filament_seg`) paired with lightweight experiment notebooks and configuration files:
+Reusable code lives in `src/filament_seg/`: dataset/COCO parsing, preprocessing, model, losses, training/checkpoints, native-resolution tiling, diagnostic evaluation, cached post-processing scoring, and submission validation. `configs/unet_resnet34_v2.yaml` records the v2 experiment. The current trainer selects the best checkpoint by **patch validation Dice**; native-resolution PQ is a separate diagnostic, not the checkpoint selection metric.
 
-```text
-solar-filament-segmentation/
-├── src/
-│   └── filament_seg/
-│       ├── __init__.py          # Package exports and version metadata
-│       ├── dataset.py           # Dataset loading & uncharacterized dataset inspector
-│       ├── preprocessing.py     # Image loading, normalization, and Albumentations transforms
-│       ├── model.py             # SMP segmentation architecture initialization
-│       ├── losses.py            # BCE, Soft Dice, and combined BCEDiceLoss
-│       ├── train.py             # Modular training and validation loops with checkpointing
-│       ├── evaluate.py          # Metric calculations: IoU, Dice, Precision, Recall
-│       ├── inference.py         # Prediction pipeline, watershed instance separation, RLE
-│       └── utils.py             # Deterministic seed setting, config YAML I/O, device detection
-├── notebooks/
-│   ├── 01_eda.ipynb             # Dataset investigation and exploratory analysis
-│   ├── 02_training.ipynb        # Staged training runner (calls filament_seg)
-│   └── 03_submission.ipynb      # Kaggle inference and submission generator
-├── configs/
-│   └── baseline.yaml            # Single source of truth for hyperparameters
-├── tests/                       # Unit tests for preprocessing, losses, and metrics
-├── outputs/                     # Local experiment logs, metrics, and checkpoints
-├── environment.yml              # Conda environment definition (solar-filament, Python 3.11)
-├── requirements.txt             # Pip-compatible dependency manifest
-├── pyproject.toml               # PEP 517 / 621 package build configuration
-├── .gitignore                   # Ignores large files, weights, and caches
-└── README.md                    # Project overview and engineering documentation
-```
+## Checkpoints and resume
 
----
+`project_path()` resolves configured relative paths against the repository root, independent of notebook working directory. Production v2 files are `checkpoints/unet_resnet34_v2/latest.pth` (resume state) and `best_model.pth` (inference/evaluation). Smoke runs create uniquely named files under `checkpoints/unet_resnet34_v2/smoke_runs/`; existing smoke checkpoints remain untouched. `resume=True` reads only `latest.pth`, rejects smoke metadata and a mismatched experiment name when present, and returns `already_completed` when the saved epoch has reached the configured maximum. `resume=False` refuses to overwrite existing production weights; use a new experiment checkpoint directory for a fresh run. Do not copy a smoke checkpoint to `latest.pth`.
 
-## 3. Staged Development Methodology
+The local v1 best checkpoint is epoch 11; v2 best is epoch 29 and v2 latest is epoch 30. These files are **not** in Git. For post-training evaluation, load `best_model.pth` explicitly and verify its epoch. See the [consolidation audit](reports/consolidation_audit.md) for checkpoint locations and preserved hashes.
 
-To guarantee scientific rigor, reproducibility, and prevent data leakage:
+## Evaluation and submission
 
-```text
-[Phase 1: Project Setup] ────> [Phase 2: Dataset Discovery] ────> [Phase 3: Stage A Baseline]
-  • Package initialization       • Dimensions & formats           • Semantic U-Net (ResNet34)
-  • Conda env & pyproject        • Intensity distributions        • BCE + Dice combined loss
-  • Test suite verified          • Annotation schema              • Validation tracking
-                                                                          │
-                                                                          ▼
-[Phase 5: Optimization]  <──── [Phase 4: Stage B Instances] <─────────────┘
-  • Encoders (EffNet/ConvNeXt)   • Marker-controlled Watershed
-  • Hyperparameter tuning        • Connected components
-  • Resolution ablation          • False-positive filtering
-```
+`predict_tiled` reconstructs 2048 × 2048 probability maps from 512 × 512 tiles, with 128-pixel overlap by default. `iter_probability_instances` thresholds and separates connected components. Touching filaments can merge, limiting this baseline. `diagnostic_panoptic_quality` uses one-to-one IoU matching and can return matched/unmatched indices for error analysis. Empty-image conventions and alternative annotator aggregation may differ from the official scorer.
 
-- **Stage A (Baseline):** Semantic segmentation using U-Net (`segmentation-models-pytorch`) with ResNet-34 backbone and combined BCE + Dice loss.
-- **Stage B (Instance Segmentation):** Transform semantic probability maps into separated physical instances using distance transforms, core seeding, and marker-controlled watershed segmentation.
-- **Stage C (Optimization):** Systematic single-variable ablations (backbone encoders, multi-scale inputs, boundary-weighted loss, threshold sweeps).
+The competition CSV requires `filament_id,segmentation_rle`, one row per predicted filament, with compressed COCO counts for full-resolution masks. `generate_submission()` validates rows and refuses to overwrite an existing CSV. `03_submission.ipynb` generates the entire 180-image file only when explicitly enabled; it reports images with no predicted instances. The pre-existing 33-row, five-image artifact is retained as [`historical_partial_submission_5_images.csv`](outputs/historical_partial_submission_5_images.csv) and is **not** a complete competition submission. No Kaggle acceptance test has been performed.
 
----
+## Research status
 
-## 4. Local Installation & Setup
+The [Stage 3.3 report](reports/stage_3_3_verification.md) covers CUDA and instance infrastructure. The [historical pipeline audit](reports/pipeline_audit_report.md) and [failure analysis](reports/error_and_failure_analysis.md) contain v1 results and hypotheses. Historical v2 PQ values in the research notebooks are unverified references until recomputed with a fixed full-validation protocol. The most valuable next work is scorer parity, full-validation v2 error analysis, then controlled instance-separation and tiling experiments. Preserve a tuning/holdout distinction; do not compare scores from different subsets as though they were the same benchmark.
 
-### Prerequisites
-- Anaconda or Miniconda
-- Git
-
-### 1. Create and Activate the Conda Environment
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/solar-filament-segmentation.git
-cd solar-filament-segmentation
-
-# Create the conda environment
-conda env create -f environment.yml
-
-# Activate the environment
-conda activate solar-filament
-```
-
-### 2. Install Package in Editable Mode
-
-Install `filament_seg` in editable mode (`-e`) so changes to `src/` are immediately reflected:
-
-```bash
-pip install -e .
-```
-
-### 3. Verify Installation & Run Unit Tests
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## 5. Kaggle Integration Strategy
-
-The local codebase serves as the single source of truth. Kaggle Notebooks are kept lightweight and consume `filament_seg` via one of two deployment paths:
-
-1. **Online Mode (Internet Enabled):**
-   ```bash
-   !git clone https://github.com/your-username/solar-filament-segmentation.git
-   %cd solar-filament-segmentation
-   !pip install -e .
-   ```
-2. **Offline Mode (Competition Inference / Internet Disabled):**
-   - Package `src/` into a versioned Kaggle Dataset:
-     ```bash
-     tar -czvf filament_seg_src.tar.gz -C src filament_seg
-     ```
-   - In the Kaggle notebook:
-     ```python
-     import sys
-     sys.path.append("/kaggle/input/filament-seg-src")
-     import filament_seg
-     ```
-
----
-
-## 6. Engineering Standards
-
-- **Strict Type Annotations:** All module signatures utilize PEP 484 type hints.
-- **Reproducibility:** Deterministic seeds enforced across `random`, `numpy`, and `torch` via `set_seed()`.
-- **Portable Paths:** All file operations utilize `pathlib.Path` to support cross-platform execution (Windows local dev and Linux Kaggle workers).
-- **Metric Decoupling:** Semantic quality (IoU, Dice) is evaluated independently from instance separation metrics.
+The older feature branches and executed verification notebooks remain recoverable from Git history. See [consolidation audit](reports/consolidation_audit.md) for their disposition.

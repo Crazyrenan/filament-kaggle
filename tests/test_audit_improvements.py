@@ -252,6 +252,10 @@ def test_submission_generation_and_validation(tmp_path):
     assert list(df.columns) == ["filament_id", "segmentation_rle"]
     # Since model output is low, 0 instances are generated without schema error
     assert len(df) == 0
+    original = out_csv.read_bytes()
+    with pytest.raises(FileExistsError):
+        generate_submission(model, [img1], output_csv_path=out_csv, device="cpu")
+    assert out_csv.read_bytes() == original
 
 
 def test_amp_optimizer_step_guard():

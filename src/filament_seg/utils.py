@@ -123,3 +123,17 @@ def get_device(preferred: str | None = None) -> Any:
         return torch.device("cpu")
     except ImportError:
         return preferred or "cpu"
+
+
+def project_root() -> Path:
+    """Return the source checkout root independently of the process working directory."""
+    root = Path(__file__).resolve().parents[2]
+    if not (root / "pyproject.toml").is_file():
+        raise FileNotFoundError(f"Project root not found from {__file__}")
+    return root
+
+
+def project_path(path: str | Path) -> Path:
+    """Resolve a configured path against this checkout, preserving absolute paths."""
+    value = Path(path)
+    return value if value.is_absolute() else project_root() / value
