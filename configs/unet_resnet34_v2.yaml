@@ -1,0 +1,57 @@
+# Solar Filament Segmentation - U-Net ResNet34 v2 (EDA-Informed) Configuration
+project:
+  name: "solar-filament-segmentation"
+  experiment_name: "unet-resnet34-v2"
+  seed: 42
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  output_dir: "outputs"
+  train_split: 0.8
+  val_split: 0.2
+
+preprocessing:
+  patch_size: 512
+  foreground_prob: 0.7
+  in_channels: 1
+  normalization: "minmax"  # scales to [0.0, 1.0]
+
+model:
+  architecture: "Unet"
+  encoder_name: "resnet34"
+  encoder_weights: "imagenet"  # ImageNet pretrained backbone adapted to 1 channel
+  in_channels: 1
+  classes: 1
+  activation: null  # raw logits for loss function
+
+training:
+  epochs: 30
+  batch_size: 4
+  num_workers: 0  # safe Windows multi-threading
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  loss:
+    bce_weight: 0.5
+    dice_weight: 0.5
+    smooth: 1.0
+    pos_weight: 8.0  # Calibrated based on foreground-aware patch ratio (reduced from 30 to curb false positives)
+  scheduler:
+    name: "CosineAnnealingLR"
+    t_max: 30
+    eta_min: 0.000001
+  mixed_precision: true
+  clip_grad_norm: 1.0
+  early_stopping_patience: 7
+  checkpoint_dir: "checkpoints/unet_resnet34_v2"
+  selection_metric: "val_dice_full"  # Full-resolution tiled validation metric
+
+evaluation:
+  tile_size: 512
+  overlap: 128
+  batch_size: 4
+
+postprocessing:
+  mask_threshold: 0.75
+  instance_method: "connected_components"
+  min_instance_area: 300

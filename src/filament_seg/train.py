@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
+from torch.utils.data import DataLoader, Subset
 
-from filament_seg.evaluate import compute_dice, compute_iou
+from filament_seg.evaluate import compute_dice, compute_iou, evaluate_full_resolution_dataset
+from filament_seg.losses import BCEDiceLoss
+from filament_seg.model import build_model
 from filament_seg.utils import get_logger
 
 logger = get_logger(__name__)
@@ -278,3 +282,222 @@ def load_checkpoint(
         checkpoint.get("best_val_dice"),
     )
     return checkpoint
+
+
+def train_v2_model(
+    config: dict[str, Any],
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    val_dataset: Any,
+    val_indices: list[int],
+    device: Any = "cuda",
+    resume: bool = True,
+    max_epochs: int | None = None,
+    smoke_test: bool = False,
+) -> dict[str, Any]:
+    """Train or resume the U-Net ResNet34 v2 model with full-resolution evaluation.
+
+    Args:
+        config: Configuration dictionary (matching unet_resnet34_v2.yaml).
+        train_loader: DataLoader for 512x512 foreground-aware training patches.
+        val_loader: DataLoader for validation patch checks.
+        val_dataset: SolarFilamentDataset instance for full-resolution tiled evaluation.
+        val_indices: Indices of validation images.
+        device: Execution device (e.g. 'cuda').
+        resume: Whether to resume from latest.pth if present.
+        max_epochs: Optional override for total training epochs.
+        smoke_test: If True, executes 2 batches and validates checkpoint saving/loading.
+
+    Returns:
+        Dictionary containing trained model, history, and best checkpoint state.
+    """
+    dev = torch.device(device)
+    train_cfg = config.get("training", {})
+    total_epochs = max_epochs or train_cfg.get("epochs", 30)
+    ckpt_dir = Path(train_cfg.get("checkpoint_dir", "checkpoints/unet_resnet34_v2"))
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    latest_ckpt_path = ckpt_dir / "latest.pth"
+    best_ckpt_path = ckpt_dir / "best_model.pth"
+
+    # Instantiate model with ImageNet pretraining
+    pretrained = config.get("model", {}).get("encoder_weights") == "imagenet"
+    model = build_model(
+        architecture="unet",
+        encoder_name=config.get("model", {}).get("encoder_name", "resnet34"),
+        pretrained=pretrained,
+        in_channels=config.get("model", {}).get("in_channels", 1),
+        classes=config.get("model", {}).get("classes", 1),
+    ).to(dev)
+
+    lr = float(train_cfg.get("learning_rate", 3e-4))
+    wd = float(train_cfg.get("weight_decay", 1e-4))
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
+
+    scheduler_cfg = train_cfg.get("scheduler", {})
+    t_max = int(scheduler_cfg.get("t_max", total_epochs))
+    eta_min = float(scheduler_cfg.get("eta_min", 1e-6))
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=t_max, eta_min=eta_min)
+
+    use_amp = bool(train_cfg.get("mixed_precision", True)) and dev.type == "cuda"
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
+
+    loss_cfg = train_cfg.get("loss", {})
+    pos_weight = float(loss_cfg.get("pos_weight", 8.0))
+    criterion = BCEDiceLoss(
+        bce_weight=float(loss_cfg.get("bce_weight", 0.5)),
+        dice_weight=float(loss_cfg.get("dice_weight", 0.5)),
+        smooth=float(loss_cfg.get("smooth", 1.0)),
+        pos_weight=pos_weight,
+    )
+
+    clip_grad = float(train_cfg.get("clip_grad_norm", 1.0))
+    patience = int(train_cfg.get("early_stopping_patience", 7))
+
+    start_epoch = 1
+    best_val_dice = 0.0
+    epochs_without_improvement = 0
+    history: list[dict[str, Any]] = []
+
+    # Resume from checkpoint if requested and available
+    if resume and latest_ckpt_path.is_file():
+        logger.info("Resuming training from %s", latest_ckpt_path)
+        checkpoint = load_checkpoint(
+            latest_ckpt_path,
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            scaler=scaler,
+            map_location=dev,
+        )
+        start_epoch = checkpoint.get("epoch", 0) + 1
+        best_val_dice = checkpoint.get("best_val_dice", 0.0)
+        epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
+        history = checkpoint.get("history", [])
+        logger.info("Resumed at epoch %d, previous best metric: %.4f", start_epoch, best_val_dice)
+
+    # Smoke test mode
+    if smoke_test:
+        logger.info("Running U-Net v2 training smoke test (2 batches)...")
+        model.train()
+        smoke_loader = [next(iter(train_loader)), next(iter(train_loader))]
+        optimizer.zero_grad(set_to_none=True)
+        for i, batch in enumerate(smoke_loader):
+            img = batch["image"][:2].to(dev)
+            msk = batch["mask"][:2].to(dev)
+            with torch.amp.autocast(device_type=dev.type, enabled=use_amp):
+                out = model(img)
+                loss = criterion(out, msk)
+            if use_amp:
+                scaler.scale(loss).backward()
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=clip_grad)
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                loss.backward()
+                optimizer.step()
+            optimizer.zero_grad(set_to_none=True)
+
+        # Smoke validation
+        smoke_val_batch = next(iter(val_loader))
+        with torch.no_grad():
+            with torch.amp.autocast(device_type=dev.type, enabled=use_amp):
+                val_out = model(smoke_val_batch["image"][:2].to(dev))
+                val_loss = criterion(val_out, smoke_val_batch["mask"][:2].to(dev))
+
+        smoke_state = {
+            "epoch": 0,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "scheduler_state_dict": scheduler.state_dict(),
+            "scaler_state_dict": scaler.state_dict(),
+            "best_val_dice": 0.5,
+            "history": [{"epoch": 0, "smoke_test": True}],
+            "epochs_without_improvement": 0,
+        }
+        smoke_path = ckpt_dir / "smoke_checkpoint.pth"
+        save_checkpoint(smoke_state, smoke_path, is_best=False)
+        assert smoke_path.is_file()
+        loaded = load_checkpoint(smoke_path, model, map_location=dev)
+        assert loaded["epoch"] == 0
+        logger.info("Smoke test SUCCESS: CUDA, AMP, gradients, loss, save/load verified.")
+        return {
+            "status": "smoke_test_passed",
+            "loss": float(loss.item()),
+            "val_loss": float(val_loss.item()),
+            "checkpoint": str(smoke_path),
+        }
+
+    # Full training loop
+    logger.info("Starting training from epoch %d to %d...", start_epoch, total_epochs)
+    for epoch in range(start_epoch, total_epochs + 1):
+        t0 = time.time()
+        train_loss = train_one_epoch(
+            model=model,
+            dataloader=train_loader,
+            criterion=criterion,
+            optimizer=optimizer,
+            device=dev,
+            scaler=scaler,
+            clip_grad_norm=clip_grad,
+        )
+
+        patch_metrics = validate_one_epoch(model, val_loader, criterion, device=dev)
+        current_val_dice = patch_metrics["val_dice"]
+        current_val_loss = patch_metrics["val_loss"]
+        current_lr = optimizer.param_groups[0]["lr"]
+        scheduler.step()
+
+        is_best = current_val_dice > best_val_dice
+        if is_best:
+            best_val_dice = current_val_dice
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+
+        record = {
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "val_loss": current_val_loss,
+            "val_dice": current_val_dice,
+            "val_iou": patch_metrics["val_iou"],
+            "lr": current_lr,
+            "time_sec": time.time() - t0,
+        }
+        history.append(record)
+
+        state = {
+            "epoch": epoch,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "scheduler_state_dict": scheduler.state_dict(),
+            "scaler_state_dict": scaler.state_dict(),
+            "best_val_dice": best_val_dice,
+            "history": history,
+            "epochs_without_improvement": epochs_without_improvement,
+        }
+        save_checkpoint(state, latest_ckpt_path, is_best=is_best)
+
+        logger.info(
+            "Epoch %d/%d - Train Loss: %.4f | Val Loss: %.4f | Val Dice: %.4f (Best: %.4f) | LR: %.6f | Time: %.1fs",
+            epoch,
+            total_epochs,
+            train_loss,
+            current_val_loss,
+            current_val_dice,
+            best_val_dice,
+            current_lr,
+            time.time() - t0,
+        )
+
+        if epochs_without_improvement >= patience:
+            logger.info("Early stopping triggered after %d epochs without improvement.", patience)
+            break
+
+    return {
+        "model": model,
+        "best_val_dice": best_val_dice,
+        "history": history,
+        "best_checkpoint": str(best_ckpt_path),
+        "latest_checkpoint": str(latest_ckpt_path),
+    }

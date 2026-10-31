@@ -337,6 +337,24 @@ def evaluate_full_resolution_dataset(
         # Full-resolution ground truth instances
         gt_instances = [inst["mask"] for inst in dataset.iter_instances(idx, annotation_set_index=annotation_set_index)]
 
+        # If dataset item was cropped by a transform (e.g. 512x512), recover full resolution
+        if hasattr(dataset, "image_dir") and hasattr(dataset, "filenames"):
+            expected_shape = (2048, 2048)
+            if hasattr(dataset, "images_by_filename"):
+                img_sets = dataset.images_by_filename.get(filename, [])
+                if img_sets:
+                    expected_shape = (img_sets[0].get("height", 2048), img_sets[0].get("width", 2048))
+            if image_tensor.shape[-2:] != expected_shape:
+                import cv2
+                import torch
+                raw_img = cv2.imread(str(dataset.image_dir / filename), cv2.IMREAD_GRAYSCALE)
+                if raw_img is not None:
+                    image_tensor = torch.as_tensor(raw_img.astype(np.float32) / 255.0, dtype=torch.float32).unsqueeze(0)
+                raw_mask = np.zeros(expected_shape, dtype=np.uint8)
+                for inst_m in gt_instances:
+                    raw_mask = np.maximum(raw_mask, inst_m)
+                gt_mask = raw_mask
+
         # Native resolution prediction
         if use_tiled:
             prob_map = predict_tiled(
@@ -458,3 +476,173 @@ def evaluate_full_resolution_dataset(
         logger.info("Saved validation aggregate metrics to %s", json_p)
 
     return {"summary": summary, "per_image": records}
+
+
+def compare_models(
+    model_a: Any,
+    model_b: Any,
+    dataset: Any,
+    sample_indices: list[int],
+    device: Any = "cuda",
+    threshold_a: float = 0.75,
+    min_area_a: int = 300,
+    threshold_b: float = 0.75,
+    min_area_b: int = 300,
+    model_a_name: str = "Baseline U-Net (v1)",
+    model_b_name: str = "U-Net ResNet34 v2",
+    tile_size: int = 512,
+    overlap: int = 128,
+) -> dict[str, Any]:
+    """Compare two models on the exact same validation subset and coordinates.
+
+    Supports fixed postprocessing comparison (isolating model architectural/loss improvements)
+    as well as model-specific tuned postprocessing comparisons.
+
+    Args:
+        model_a: First model (e.g. baseline v1).
+        model_b: Second model (e.g. EDA-informed v2).
+        dataset: SolarFilamentDataset instance.
+        sample_indices: Validation image indices to evaluate.
+        device: Target execution device.
+        threshold_a: Probability threshold for Model A.
+        min_area_a: Min area for Model A.
+        threshold_b: Probability threshold for Model B.
+        min_area_b: Min area for Model B.
+        model_a_name: Display name for Model A.
+        model_b_name: Display name for Model B.
+        tile_size: Tiled inference tile size.
+        overlap: Tile overlap.
+
+    Returns:
+        Dictionary containing comparison summary table and per-model results.
+    """
+    import time
+    import torch
+
+    dev = torch.device(device)
+    logger.info("Comparing %s vs %s on %d validation images...", model_a_name, model_b_name, len(sample_indices))
+
+    # Evaluate Model A
+    if dev.type == "cuda":
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+    t0_a = time.time()
+    res_a = evaluate_full_resolution_dataset(
+        model=model_a,
+        dataset=dataset,
+        sample_indices=sample_indices,
+        device=dev,
+        threshold=threshold_a,
+        min_area=min_area_a,
+        use_tiled=True,
+        tile_size=tile_size,
+        overlap=overlap,
+    )
+    time_a = time.time() - t0_a
+    mem_a = torch.cuda.max_memory_allocated() / (1024**2) if dev.type == "cuda" else 0.0
+
+    # Evaluate Model B
+    if dev.type == "cuda":
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+    t0_b = time.time()
+    res_b = evaluate_full_resolution_dataset(
+        model=model_b,
+        dataset=dataset,
+        sample_indices=sample_indices,
+        device=dev,
+        threshold=threshold_b,
+        min_area=min_area_b,
+        use_tiled=True,
+        tile_size=tile_size,
+        overlap=overlap,
+    )
+    time_b = time.time() - t0_b
+    mem_b = torch.cuda.max_memory_allocated() / (1024**2) if dev.type == "cuda" else 0.0
+
+    sum_a = res_a["summary"]
+    sum_b = res_b["summary"]
+
+    comparison_data = [
+        {
+            "Metric": "Macro Dice",
+            model_a_name: sum_a["semantic_metrics"]["macro_dice"],
+            model_b_name: sum_b["semantic_metrics"]["macro_dice"],
+            "Delta (v2 - v1)": sum_b["semantic_metrics"]["macro_dice"] - sum_a["semantic_metrics"]["macro_dice"],
+        },
+        {
+            "Metric": "Micro (Global) Dice",
+            model_a_name: sum_a["semantic_metrics"]["micro_dice"],
+            model_b_name: sum_b["semantic_metrics"]["micro_dice"],
+            "Delta (v2 - v1)": sum_b["semantic_metrics"]["micro_dice"] - sum_a["semantic_metrics"]["micro_dice"],
+        },
+        {
+            "Metric": "Macro IoU",
+            model_a_name: sum_a["semantic_metrics"]["macro_iou"],
+            model_b_name: sum_b["semantic_metrics"]["macro_iou"],
+            "Delta (v2 - v1)": sum_b["semantic_metrics"]["macro_iou"] - sum_a["semantic_metrics"]["macro_iou"],
+        },
+        {
+            "Metric": "Pixel Precision",
+            model_a_name: sum_a["semantic_metrics"]["macro_precision"],
+            model_b_name: sum_b["semantic_metrics"]["macro_precision"],
+            "Delta (v2 - v1)": sum_b["semantic_metrics"]["macro_precision"] - sum_a["semantic_metrics"]["macro_precision"],
+        },
+        {
+            "Metric": "Pixel Recall",
+            model_a_name: sum_a["semantic_metrics"]["macro_recall"],
+            model_b_name: sum_b["semantic_metrics"]["macro_recall"],
+            "Delta (v2 - v1)": sum_b["semantic_metrics"]["macro_recall"] - sum_a["semantic_metrics"]["macro_recall"],
+        },
+        {
+            "Metric": "Global Panoptic Quality (PQ)",
+            model_a_name: sum_a["instance_metrics"]["global_pq"],
+            model_b_name: sum_b["instance_metrics"]["global_pq"],
+            "Delta (v2 - v1)": sum_b["instance_metrics"]["global_pq"] - sum_a["instance_metrics"]["global_pq"],
+        },
+        {
+            "Metric": "Macro Panoptic Quality (PQ)",
+            model_a_name: sum_a["instance_metrics"]["macro_pq"],
+            model_b_name: sum_b["instance_metrics"]["macro_pq"],
+            "Delta (v2 - v1)": sum_b["instance_metrics"]["macro_pq"] - sum_a["instance_metrics"]["macro_pq"],
+        },
+        {
+            "Metric": "True Positives (TP)",
+            model_a_name: sum_a["instance_metrics"]["total_tp"],
+            model_b_name: sum_b["instance_metrics"]["total_tp"],
+            "Delta (v2 - v1)": sum_b["instance_metrics"]["total_tp"] - sum_a["instance_metrics"]["total_tp"],
+        },
+        {
+            "Metric": "False Positives (FP)",
+            model_a_name: sum_a["instance_metrics"]["total_fp"],
+            model_b_name: sum_b["instance_metrics"]["total_fp"],
+            "Delta (v2 - v1)": sum_b["instance_metrics"]["total_fp"] - sum_a["instance_metrics"]["total_fp"],
+        },
+        {
+            "Metric": "False Negatives (FN)",
+            model_a_name: sum_a["instance_metrics"]["total_fn"],
+            model_b_name: sum_b["instance_metrics"]["total_fn"],
+            "Delta (v2 - v1)": sum_b["instance_metrics"]["total_fn"] - sum_a["instance_metrics"]["total_fn"],
+        },
+        {
+            "Metric": "Inference Time (s/image)",
+            model_a_name: time_a / len(sample_indices),
+            model_b_name: time_b / len(sample_indices),
+            "Delta (v2 - v1)": (time_b - time_a) / len(sample_indices),
+        },
+        {
+            "Metric": "Peak VRAM (MiB)",
+            model_a_name: mem_a,
+            model_b_name: mem_b,
+            "Delta (v2 - v1)": mem_b - mem_a,
+        },
+    ]
+
+    import pandas as pd
+    df_comp = pd.DataFrame(comparison_data)
+
+    return {
+        "comparison_table": df_comp,
+        "results_a": res_a,
+        "results_b": res_b,
+    }
