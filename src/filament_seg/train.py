@@ -353,29 +353,7 @@ def train_v2_model(
     clip_grad = float(train_cfg.get("clip_grad_norm", 1.0))
     patience = int(train_cfg.get("early_stopping_patience", 7))
 
-    start_epoch = 1
-    best_val_dice = 0.0
-    epochs_without_improvement = 0
-    history: list[dict[str, Any]] = []
-
-    # Resume from checkpoint if requested and available
-    if resume and latest_ckpt_path.is_file():
-        logger.info("Resuming training from %s", latest_ckpt_path)
-        checkpoint = load_checkpoint(
-            latest_ckpt_path,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            scaler=scaler,
-            map_location=dev,
-        )
-        start_epoch = checkpoint.get("epoch", 0) + 1
-        best_val_dice = checkpoint.get("best_val_dice", 0.0)
-        epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
-        history = checkpoint.get("history", [])
-        logger.info("Resumed at epoch %d, previous best metric: %.4f", start_epoch, best_val_dice)
-
-    # Smoke test mode
+    # Smoke test mode - strictly isolated from full training
     if smoke_test:
         logger.info("Running U-Net v2 training smoke test (2 batches)...")
         model.train()
@@ -416,6 +394,8 @@ def train_v2_model(
             "epochs_without_improvement": 0,
         }
         smoke_path = ckpt_dir / "smoke_checkpoint.pth"
+        assert smoke_path.resolve() != latest_ckpt_path.resolve(), "Smoke checkpoint must not overwrite latest.pth"
+        assert smoke_path.resolve() != best_ckpt_path.resolve(), "Smoke checkpoint must not overwrite best_model.pth"
         save_checkpoint(smoke_state, smoke_path, is_best=False)
         assert smoke_path.is_file()
         loaded = load_checkpoint(smoke_path, model, map_location=dev)
@@ -427,6 +407,43 @@ def train_v2_model(
             "val_loss": float(val_loss.item()),
             "checkpoint": str(smoke_path),
         }
+
+    # Full training resumption logic: strictly only loads latest.pth if present
+    start_epoch = 1
+    best_val_dice = 0.0
+    epochs_without_improvement = 0
+    history: list[dict[str, Any]] = []
+
+    if resume:
+        if latest_ckpt_path.is_file():
+            logger.info("Resuming full training from latest checkpoint: %s", latest_ckpt_path)
+            checkpoint = load_checkpoint(
+                latest_ckpt_path,
+                model=model,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                scaler=scaler,
+                map_location=dev,
+            )
+            start_epoch = checkpoint.get("epoch", 0) + 1
+            best_val_dice = checkpoint.get("best_val_dice", 0.0)
+            epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
+            history = checkpoint.get("history", [])
+            logger.info(
+                "Resumed at epoch %d, previous best metric: %.4f (history entries: %d)",
+                start_epoch,
+                best_val_dice,
+                len(history),
+            )
+        else:
+            logger.info(
+                "Resume requested but no checkpoint found at %s. Initializing fresh training run with ImageNet-pretrained ResNet34 encoder from epoch 1.",
+                latest_ckpt_path,
+            )
+    else:
+        logger.info(
+            "Initializing fresh training run with ImageNet-pretrained ResNet34 encoder from epoch 1 (resume=False)."
+        )
 
     # Full training loop
     logger.info("Starting training from epoch %d to %d...", start_epoch, total_epochs)
