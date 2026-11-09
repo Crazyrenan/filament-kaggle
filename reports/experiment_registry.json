@@ -154,9 +154,24 @@
       "best_epoch": 3,
       "best_val_dice": 0.6794256494758129,
       "checkpoint_dir": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v3_hard_negative_01",
+      "evaluation_report": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\unet_resnet34_v3_hard_negative_01_internal_20261109T233024Z.json",
+      "internal_fixed_global_pq": 0.37759518585017754,
+      "internal_tuned_global_pq": 0.41075709027497265,
+      "internal_v2_baseline_global_pq": 0.4099034711305698,
       "latest_checkpoint": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v3_hard_negative_01\\latest.pth",
+      "paired_bootstrap_95pct_delta_interval": [
+        -0.012175331443310539,
+        0.01268389171636786
+      ],
       "parent_checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
-      "status": "training_complete"
+      "selected_postprocessing": {
+        "max_radial_distance": 2.0,
+        "min_mean_probability": 0.96,
+        "name": "confidence_0p96"
+      },
+      "selection_status": "not_selected",
+      "status": "evaluation_complete",
+      "submission_generated": false
     }
   }
 }

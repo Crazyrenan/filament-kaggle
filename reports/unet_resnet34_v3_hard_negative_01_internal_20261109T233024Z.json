@@ -1,0 +1,1785 @@
+{
+  "phase": "internal_scored_once",
+  "status": "provisional",
+  "experiment_id": "unet_resnet34_v3_hard_negative_01",
+  "frozen_path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\unet_resnet34_v3_hard_negative_01_frozen_20261109T232907Z.json",
+  "frozen_sha256": "6556d1acc571bbdcade211b1b3127cbd0f0473142e646b5446442e8e9001949a",
+  "v2_fixed": {
+    "config": {
+      "name": "fixed_v2_protocol",
+      "min_mean_probability": 0.97,
+      "max_radial_distance": 2.0
+    },
+    "summary": {
+      "images": 71,
+      "global_pq": 0.4099034711305698,
+      "sq": 0.6733449131332794,
+      "rq": 0.6087570621468926,
+      "tp": 431,
+      "fp": 240,
+      "fn": 314,
+      "postprocessing_seconds_per_image": 0.12801774647918981
+    },
+    "per_image": [
+      {
+        "index": 453,
+        "filename": "20110322005814Mh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 369,
+        "filename": "20201022223330Lh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 416,
+        "filename": "20170310133730Ch.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 2,
+        "fn": 3
+      },
+      {
+        "index": 81,
+        "filename": "20130926060834Lh.jpeg",
+        "sum_iou": 6.811706032388426,
+        "tp": 10,
+        "fp": 0,
+        "fn": 5
+      },
+      {
+        "index": 573,
+        "filename": "20130903060834Lh.jpeg",
+        "sum_iou": 7.095829498562758,
+        "tp": 10,
+        "fp": 6,
+        "fn": 3
+      },
+      {
+        "index": 603,
+        "filename": "20180804234530Lh.jpeg",
+        "sum_iou": 2.2074089992715074,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 311,
+        "filename": "20141013195854Bh.jpeg",
+        "sum_iou": 4.273125310245854,
+        "tp": 6,
+        "fp": 1,
+        "fn": 6
+      },
+      {
+        "index": 342,
+        "filename": "20160402025254Uh.jpeg",
+        "sum_iou": 1.750226368542755,
+        "tp": 3,
+        "fp": 7,
+        "fn": 12
+      },
+      {
+        "index": 540,
+        "filename": "20120313063154Uh.jpeg",
+        "sum_iou": 2.110595121852148,
+        "tp": 3,
+        "fp": 4,
+        "fn": 9
+      },
+      {
+        "index": 267,
+        "filename": "20140312081114Th.jpeg",
+        "sum_iou": 9.396051668558068,
+        "tp": 14,
+        "fp": 2,
+        "fn": 10
+      },
+      {
+        "index": 702,
+        "filename": "20170417232530Lh.jpeg",
+        "sum_iou": 1.3645825635530593,
+        "tp": 2,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 533,
+        "filename": "20111215063134Lh.jpeg",
+        "sum_iou": 8.337808699671884,
+        "tp": 12,
+        "fp": 18,
+        "fn": 7
+      },
+      {
+        "index": 105,
+        "filename": "20120729122634Ch.jpeg",
+        "sum_iou": 10.114756523918512,
+        "tp": 15,
+        "fp": 9,
+        "fn": 11
+      },
+      {
+        "index": 266,
+        "filename": "20160627133734Ch.jpeg",
+        "sum_iou": 1.3146961780242368,
+        "tp": 2,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "index": 347,
+        "filename": "20170102024454Uh.jpeg",
+        "sum_iou": 0.5355864811133201,
+        "tp": 1,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 190,
+        "filename": "20210621133650Bh.jpeg",
+        "sum_iou": 0.7231096911608094,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 604,
+        "filename": "20160726135354Bh.jpeg",
+        "sum_iou": 1.9876346933627902,
+        "tp": 3,
+        "fp": 3,
+        "fn": 2
+      },
+      {
+        "index": 593,
+        "filename": "20130221063134Lh.jpeg",
+        "sum_iou": 5.3057910722268495,
+        "tp": 8,
+        "fp": 7,
+        "fn": 2
+      },
+      {
+        "index": 339,
+        "filename": "20171029150150Bh.jpeg",
+        "sum_iou": 6.309880788112913,
+        "tp": 9,
+        "fp": 6,
+        "fn": 6
+      },
+      {
+        "index": 525,
+        "filename": "20180825205030Ch.jpeg",
+        "sum_iou": 3.215854087821572,
+        "tp": 5,
+        "fp": 4,
+        "fn": 2
+      },
+      {
+        "index": 87,
+        "filename": "20170415145450Bh.jpeg",
+        "sum_iou": 0.7308360208385016,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 5,
+        "filename": "20170411013550Uh.jpeg",
+        "sum_iou": 0.7482014388489209,
+        "tp": 1,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 442,
+        "filename": "20131017185334Ch.jpeg",
+        "sum_iou": 11.635368424688743,
+        "tp": 17,
+        "fp": 5,
+        "fn": 7
+      },
+      {
+        "index": 385,
+        "filename": "20150417082314Th.jpeg",
+        "sum_iou": 4.20687888497761,
+        "tp": 6,
+        "fp": 1,
+        "fn": 6
+      },
+      {
+        "index": 332,
+        "filename": "20140321195814Mh.jpeg",
+        "sum_iou": 10.064156996214562,
+        "tp": 15,
+        "fp": 9,
+        "fn": 16
+      },
+      {
+        "index": 359,
+        "filename": "20141105195814Mh.jpeg",
+        "sum_iou": 8.508957474875897,
+        "tp": 13,
+        "fp": 3,
+        "fn": 3
+      },
+      {
+        "index": 590,
+        "filename": "20160724135554Bh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 5,
+        "fn": 3
+      },
+      {
+        "index": 114,
+        "filename": "20170701235630Lh.jpeg",
+        "sum_iou": 2.6187539009050536,
+        "tp": 4,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 170,
+        "filename": "20131116185334Ch.jpeg",
+        "sum_iou": 5.044484784760133,
+        "tp": 7,
+        "fp": 4,
+        "fn": 10
+      },
+      {
+        "index": 123,
+        "filename": "20141006224634Lh.jpeg",
+        "sum_iou": 13.610698226972318,
+        "tp": 19,
+        "fp": 11,
+        "fn": 7
+      },
+      {
+        "index": 221,
+        "filename": "20120913165314Mh.jpeg",
+        "sum_iou": 3.8356967004353573,
+        "tp": 6,
+        "fp": 6,
+        "fn": 4
+      },
+      {
+        "index": 329,
+        "filename": "20141016022554Uh.jpeg",
+        "sum_iou": 5.629329330419657,
+        "tp": 8,
+        "fp": 4,
+        "fn": 13
+      },
+      {
+        "index": 277,
+        "filename": "20171121222130Lh.jpeg",
+        "sum_iou": 1.315817628554154,
+        "tp": 2,
+        "fp": 2,
+        "fn": 0
+      },
+      {
+        "index": 349,
+        "filename": "20151228024254Uh.jpeg",
+        "sum_iou": 1.913493174652777,
+        "tp": 3,
+        "fp": 2,
+        "fn": 1
+      },
+      {
+        "index": 690,
+        "filename": "20110317082654Uh.jpeg",
+        "sum_iou": 1.256159541727801,
+        "tp": 2,
+        "fp": 2,
+        "fn": 4
+      },
+      {
+        "index": 611,
+        "filename": "20200114073230Lh.jpeg",
+        "sum_iou": 1.1477566159463757,
+        "tp": 2,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 583,
+        "filename": "20110119082634Lh.jpeg",
+        "sum_iou": 2.635703030234685,
+        "tp": 4,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 117,
+        "filename": "20121007131134Ch.jpeg",
+        "sum_iou": 4.872572276016513,
+        "tp": 7,
+        "fp": 3,
+        "fn": 1
+      },
+      {
+        "index": 586,
+        "filename": "20160920230134Lh.jpeg",
+        "sum_iou": 3.3249997258591346,
+        "tp": 5,
+        "fp": 4,
+        "fn": 9
+      },
+      {
+        "index": 372,
+        "filename": "20130810121534Ch.jpeg",
+        "sum_iou": 4.076422281664966,
+        "tp": 6,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 10,
+        "filename": "20160703133714Th.jpeg",
+        "sum_iou": 11.681737850967306,
+        "tp": 17,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 63,
+        "filename": "20131113185414Mh.jpeg",
+        "sum_iou": 2.0424420003581414,
+        "tp": 3,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 634,
+        "filename": "20161129022454Uh.jpeg",
+        "sum_iou": 6.976373360057007,
+        "tp": 10,
+        "fp": 6,
+        "fn": 10
+      },
+      {
+        "index": 167,
+        "filename": "20210721123430Ch.jpeg",
+        "sum_iou": 2.177833169877958,
+        "tp": 3,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "index": 313,
+        "filename": "20150314081954Uh.jpeg",
+        "sum_iou": 3.1201803451396133,
+        "tp": 5,
+        "fp": 4,
+        "fn": 6
+      },
+      {
+        "index": 296,
+        "filename": "20150221155154Bh.jpeg",
+        "sum_iou": 10.810920388826931,
+        "tp": 16,
+        "fp": 8,
+        "fn": 8
+      },
+      {
+        "index": 502,
+        "filename": "20140921195854Bh.jpeg",
+        "sum_iou": 3.1018474951904964,
+        "tp": 5,
+        "fp": 4,
+        "fn": 6
+      },
+      {
+        "index": 490,
+        "filename": "20140814195854Bh.jpeg",
+        "sum_iou": 2.7389149216704136,
+        "tp": 4,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 543,
+        "filename": "20130225171214Mh.jpeg",
+        "sum_iou": 1.349648029847069,
+        "tp": 2,
+        "fp": 2,
+        "fn": 3
+      },
+      {
+        "index": 555,
+        "filename": "20130218220314Mh.jpeg",
+        "sum_iou": 3.7183694296748855,
+        "tp": 6,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 535,
+        "filename": "20110211084114Th.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 272,
+        "filename": "20130903141654Bh.jpeg",
+        "sum_iou": 7.515022169965627,
+        "tp": 11,
+        "fp": 5,
+        "fn": 9
+      },
+      {
+        "index": 15,
+        "filename": "20171027223030Lh.jpeg",
+        "sum_iou": 6.050585951235631,
+        "tp": 9,
+        "fp": 7,
+        "fn": 9
+      },
+      {
+        "index": 432,
+        "filename": "20111115063134Lh.jpeg",
+        "sum_iou": 5.540037781514726,
+        "tp": 8,
+        "fp": 3,
+        "fn": 1
+      },
+      {
+        "index": 621,
+        "filename": "20161205133714Th.jpeg",
+        "sum_iou": 3.871903580087246,
+        "tp": 6,
+        "fp": 6,
+        "fn": 3
+      },
+      {
+        "index": 287,
+        "filename": "20130212153254Bh.jpeg",
+        "sum_iou": 2.8690654691329893,
+        "tp": 4,
+        "fp": 5,
+        "fn": 4
+      },
+      {
+        "index": 300,
+        "filename": "20130809072814Th.jpeg",
+        "sum_iou": 4.407358561413654,
+        "tp": 7,
+        "fp": 5,
+        "fn": 1
+      },
+      {
+        "index": 195,
+        "filename": "20171004143950Bh.jpeg",
+        "sum_iou": 4.74064950468779,
+        "tp": 7,
+        "fp": 5,
+        "fn": 0
+      },
+      {
+        "index": 34,
+        "filename": "20160315133714Th.jpeg",
+        "sum_iou": 5.279221790418937,
+        "tp": 8,
+        "fp": 2,
+        "fn": 0
+      },
+      {
+        "index": 547,
+        "filename": "20180301050430Lh.jpeg",
+        "sum_iou": 0.7810230502052415,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 333,
+        "filename": "20130616070414Th.jpeg",
+        "sum_iou": 2.4400940996043206,
+        "tp": 4,
+        "fp": 0,
+        "fn": 5
+      },
+      {
+        "index": 49,
+        "filename": "20150302082034Lh.jpeg",
+        "sum_iou": 4.876818975258864,
+        "tp": 7,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 518,
+        "filename": "20130913142354Bh.jpeg",
+        "sum_iou": 6.471741987288936,
+        "tp": 10,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 41,
+        "filename": "20120427063154Uh.jpeg",
+        "sum_iou": 3.9651953231113044,
+        "tp": 6,
+        "fp": 4,
+        "fn": 10
+      },
+      {
+        "index": 553,
+        "filename": "20120206063134Lh.jpeg",
+        "sum_iou": 3.914138018668835,
+        "tp": 6,
+        "fp": 4,
+        "fn": 11
+      },
+      {
+        "index": 113,
+        "filename": "20130219063134Lh.jpeg",
+        "sum_iou": 1.2381199037266866,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 526,
+        "filename": "20151117172314Mh.jpeg",
+        "sum_iou": 5.72567498531618,
+        "tp": 9,
+        "fp": 6,
+        "fn": 14
+      },
+      {
+        "index": 141,
+        "filename": "20211225025850Uh.jpeg",
+        "sum_iou": 1.9853685128786656,
+        "tp": 3,
+        "fp": 3,
+        "fn": 0
+      },
+      {
+        "index": 548,
+        "filename": "20150806082034Lh.jpeg",
+        "sum_iou": 7.720472994211041,
+        "tp": 12,
+        "fp": 8,
+        "fn": 9
+      },
+      {
+        "index": 609,
+        "filename": "20170702133730Ch.jpeg",
+        "sum_iou": 1.8578870640417906,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 648,
+        "filename": "20210815140550Bh.jpeg",
+        "sum_iou": 1.2120806090846523,
+        "tp": 2,
+        "fp": 1,
+        "fn": 4
+      }
+    ]
+  },
+  "v3_fixed": {
+    "config": {
+      "name": "fixed_v2_protocol",
+      "min_mean_probability": 0.97,
+      "max_radial_distance": 2.0
+    },
+    "summary": {
+      "images": 71,
+      "global_pq": 0.37759518585017754,
+      "sq": 0.689224947666288,
+      "rq": 0.5478547854785478,
+      "tp": 332,
+      "fp": 135,
+      "fn": 413,
+      "postprocessing_seconds_per_image": 0.1003001704230998
+    },
+    "per_image": [
+      {
+        "index": 453,
+        "filename": "20110322005814Mh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 369,
+        "filename": "20201022223330Lh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 416,
+        "filename": "20170310133730Ch.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 81,
+        "filename": "20130926060834Lh.jpeg",
+        "sum_iou": 4.608446588785139,
+        "tp": 6,
+        "fp": 0,
+        "fn": 9
+      },
+      {
+        "index": 573,
+        "filename": "20130903060834Lh.jpeg",
+        "sum_iou": 5.750515348443509,
+        "tp": 8,
+        "fp": 6,
+        "fn": 5
+      },
+      {
+        "index": 603,
+        "filename": "20180804234530Lh.jpeg",
+        "sum_iou": 2.274006137586408,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 311,
+        "filename": "20141013195854Bh.jpeg",
+        "sum_iou": 4.282997072603178,
+        "tp": 6,
+        "fp": 1,
+        "fn": 6
+      },
+      {
+        "index": 342,
+        "filename": "20160402025254Uh.jpeg",
+        "sum_iou": 0.6865745310957552,
+        "tp": 1,
+        "fp": 1,
+        "fn": 14
+      },
+      {
+        "index": 540,
+        "filename": "20120313063154Uh.jpeg",
+        "sum_iou": 1.4222498188256232,
+        "tp": 2,
+        "fp": 2,
+        "fn": 10
+      },
+      {
+        "index": 267,
+        "filename": "20140312081114Th.jpeg",
+        "sum_iou": 5.491225836820508,
+        "tp": 8,
+        "fp": 2,
+        "fn": 16
+      },
+      {
+        "index": 702,
+        "filename": "20170417232530Lh.jpeg",
+        "sum_iou": 0.7421276595744681,
+        "tp": 1,
+        "fp": 1,
+        "fn": 2
+      },
+      {
+        "index": 533,
+        "filename": "20111215063134Lh.jpeg",
+        "sum_iou": 6.666429354461621,
+        "tp": 10,
+        "fp": 8,
+        "fn": 9
+      },
+      {
+        "index": 105,
+        "filename": "20120729122634Ch.jpeg",
+        "sum_iou": 6.401076560502928,
+        "tp": 9,
+        "fp": 3,
+        "fn": 17
+      },
+      {
+        "index": 266,
+        "filename": "20160627133734Ch.jpeg",
+        "sum_iou": 0.6731452455590387,
+        "tp": 1,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 347,
+        "filename": "20170102024454Uh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 190,
+        "filename": "20210621133650Bh.jpeg",
+        "sum_iou": 0.7257203842049093,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 604,
+        "filename": "20160726135354Bh.jpeg",
+        "sum_iou": 1.4824677310870755,
+        "tp": 2,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 593,
+        "filename": "20130221063134Lh.jpeg",
+        "sum_iou": 5.817372844372289,
+        "tp": 9,
+        "fp": 6,
+        "fn": 1
+      },
+      {
+        "index": 339,
+        "filename": "20171029150150Bh.jpeg",
+        "sum_iou": 4.925597142633425,
+        "tp": 7,
+        "fp": 2,
+        "fn": 8
+      },
+      {
+        "index": 525,
+        "filename": "20180825205030Ch.jpeg",
+        "sum_iou": 3.7299776398611204,
+        "tp": 6,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 87,
+        "filename": "20170415145450Bh.jpeg",
+        "sum_iou": 0.721117543418072,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 5,
+        "filename": "20170411013550Uh.jpeg",
+        "sum_iou": 0.751848808545604,
+        "tp": 1,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 442,
+        "filename": "20131017185334Ch.jpeg",
+        "sum_iou": 8.268851506606996,
+        "tp": 12,
+        "fp": 4,
+        "fn": 12
+      },
+      {
+        "index": 385,
+        "filename": "20150417082314Th.jpeg",
+        "sum_iou": 2.808496411940645,
+        "tp": 4,
+        "fp": 0,
+        "fn": 8
+      },
+      {
+        "index": 332,
+        "filename": "20140321195814Mh.jpeg",
+        "sum_iou": 6.410348392115822,
+        "tp": 9,
+        "fp": 5,
+        "fn": 22
+      },
+      {
+        "index": 359,
+        "filename": "20141105195814Mh.jpeg",
+        "sum_iou": 8.518459251706085,
+        "tp": 13,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 590,
+        "filename": "20160724135554Bh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 3,
+        "fn": 3
+      },
+      {
+        "index": 114,
+        "filename": "20170701235630Lh.jpeg",
+        "sum_iou": 1.5051112166206262,
+        "tp": 2,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 170,
+        "filename": "20131116185334Ch.jpeg",
+        "sum_iou": 2.970932058871083,
+        "tp": 4,
+        "fp": 3,
+        "fn": 13
+      },
+      {
+        "index": 123,
+        "filename": "20141006224634Lh.jpeg",
+        "sum_iou": 11.627553138233415,
+        "tp": 16,
+        "fp": 11,
+        "fn": 10
+      },
+      {
+        "index": 221,
+        "filename": "20120913165314Mh.jpeg",
+        "sum_iou": 2.130805844839048,
+        "tp": 3,
+        "fp": 6,
+        "fn": 7
+      },
+      {
+        "index": 329,
+        "filename": "20141016022554Uh.jpeg",
+        "sum_iou": 4.966933316621105,
+        "tp": 7,
+        "fp": 2,
+        "fn": 14
+      },
+      {
+        "index": 277,
+        "filename": "20171121222130Lh.jpeg",
+        "sum_iou": 1.3098039969189035,
+        "tp": 2,
+        "fp": 2,
+        "fn": 0
+      },
+      {
+        "index": 349,
+        "filename": "20151228024254Uh.jpeg",
+        "sum_iou": 1.3879498519831515,
+        "tp": 2,
+        "fp": 1,
+        "fn": 2
+      },
+      {
+        "index": 690,
+        "filename": "20110317082654Uh.jpeg",
+        "sum_iou": 1.2350268255832284,
+        "tp": 2,
+        "fp": 1,
+        "fn": 4
+      },
+      {
+        "index": 611,
+        "filename": "20200114073230Lh.jpeg",
+        "sum_iou": 1.1503084760515065,
+        "tp": 2,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 583,
+        "filename": "20110119082634Lh.jpeg",
+        "sum_iou": 1.3962200477031754,
+        "tp": 2,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 117,
+        "filename": "20121007131134Ch.jpeg",
+        "sum_iou": 3.6307445544564647,
+        "tp": 5,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 586,
+        "filename": "20160920230134Lh.jpeg",
+        "sum_iou": 2.0170013341812383,
+        "tp": 3,
+        "fp": 0,
+        "fn": 11
+      },
+      {
+        "index": 372,
+        "filename": "20130810121534Ch.jpeg",
+        "sum_iou": 3.3156683751224825,
+        "tp": 5,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 10,
+        "filename": "20160703133714Th.jpeg",
+        "sum_iou": 11.817002060626752,
+        "tp": 17,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 63,
+        "filename": "20131113185414Mh.jpeg",
+        "sum_iou": 1.4816115684852622,
+        "tp": 2,
+        "fp": 1,
+        "fn": 6
+      },
+      {
+        "index": 634,
+        "filename": "20161129022454Uh.jpeg",
+        "sum_iou": 5.0948441309702055,
+        "tp": 7,
+        "fp": 1,
+        "fn": 13
+      },
+      {
+        "index": 167,
+        "filename": "20210721123430Ch.jpeg",
+        "sum_iou": 2.1960555974526565,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 313,
+        "filename": "20150314081954Uh.jpeg",
+        "sum_iou": 0.806799336650083,
+        "tp": 1,
+        "fp": 1,
+        "fn": 10
+      },
+      {
+        "index": 296,
+        "filename": "20150221155154Bh.jpeg",
+        "sum_iou": 10.276299056169995,
+        "tp": 15,
+        "fp": 3,
+        "fn": 9
+      },
+      {
+        "index": 502,
+        "filename": "20140921195854Bh.jpeg",
+        "sum_iou": 3.1610034233719304,
+        "tp": 5,
+        "fp": 3,
+        "fn": 6
+      },
+      {
+        "index": 490,
+        "filename": "20140814195854Bh.jpeg",
+        "sum_iou": 3.2579767878662436,
+        "tp": 5,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 543,
+        "filename": "20130225171214Mh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 5
+      },
+      {
+        "index": 555,
+        "filename": "20130218220314Mh.jpeg",
+        "sum_iou": 3.908771420490919,
+        "tp": 6,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 535,
+        "filename": "20110211084114Th.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 272,
+        "filename": "20130903141654Bh.jpeg",
+        "sum_iou": 7.004522829697449,
+        "tp": 10,
+        "fp": 2,
+        "fn": 10
+      },
+      {
+        "index": 15,
+        "filename": "20171027223030Lh.jpeg",
+        "sum_iou": 4.9266802751460705,
+        "tp": 7,
+        "fp": 7,
+        "fn": 11
+      },
+      {
+        "index": 432,
+        "filename": "20111115063134Lh.jpeg",
+        "sum_iou": 5.46887925801771,
+        "tp": 8,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 621,
+        "filename": "20161205133714Th.jpeg",
+        "sum_iou": 3.2810666080145947,
+        "tp": 5,
+        "fp": 4,
+        "fn": 4
+      },
+      {
+        "index": 287,
+        "filename": "20130212153254Bh.jpeg",
+        "sum_iou": 2.3212275816759322,
+        "tp": 3,
+        "fp": 2,
+        "fn": 5
+      },
+      {
+        "index": 300,
+        "filename": "20130809072814Th.jpeg",
+        "sum_iou": 3.3172027233981134,
+        "tp": 5,
+        "fp": 2,
+        "fn": 3
+      },
+      {
+        "index": 195,
+        "filename": "20171004143950Bh.jpeg",
+        "sum_iou": 2.8467053532667945,
+        "tp": 4,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 34,
+        "filename": "20160315133714Th.jpeg",
+        "sum_iou": 4.773277489929926,
+        "tp": 7,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 547,
+        "filename": "20180301050430Lh.jpeg",
+        "sum_iou": 0.7840779853777416,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 333,
+        "filename": "20130616070414Th.jpeg",
+        "sum_iou": 1.8148720107284129,
+        "tp": 3,
+        "fp": 0,
+        "fn": 6
+      },
+      {
+        "index": 49,
+        "filename": "20150302082034Lh.jpeg",
+        "sum_iou": 3.5481970829816554,
+        "tp": 5,
+        "fp": 3,
+        "fn": 7
+      },
+      {
+        "index": 518,
+        "filename": "20130913142354Bh.jpeg",
+        "sum_iou": 5.296111480064957,
+        "tp": 8,
+        "fp": 1,
+        "fn": 5
+      },
+      {
+        "index": 41,
+        "filename": "20120427063154Uh.jpeg",
+        "sum_iou": 2.1177518517935683,
+        "tp": 3,
+        "fp": 3,
+        "fn": 13
+      },
+      {
+        "index": 553,
+        "filename": "20120206063134Lh.jpeg",
+        "sum_iou": 3.3029305050077418,
+        "tp": 5,
+        "fp": 3,
+        "fn": 12
+      },
+      {
+        "index": 113,
+        "filename": "20130219063134Lh.jpeg",
+        "sum_iou": 1.461618602121161,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 526,
+        "filename": "20151117172314Mh.jpeg",
+        "sum_iou": 6.27096937220082,
+        "tp": 10,
+        "fp": 5,
+        "fn": 13
+      },
+      {
+        "index": 141,
+        "filename": "20211225025850Uh.jpeg",
+        "sum_iou": 2.0200753243417005,
+        "tp": 3,
+        "fp": 6,
+        "fn": 0
+      },
+      {
+        "index": 548,
+        "filename": "20150806082034Lh.jpeg",
+        "sum_iou": 3.8800714411841155,
+        "tp": 6,
+        "fp": 6,
+        "fn": 15
+      },
+      {
+        "index": 609,
+        "filename": "20170702133730Ch.jpeg",
+        "sum_iou": 0.5829706202393906,
+        "tp": 1,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 648,
+        "filename": "20210815140550Bh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 6
+      }
+    ]
+  },
+  "v3_tuned": {
+    "config": {
+      "name": "confidence_0p96",
+      "min_mean_probability": 0.96,
+      "max_radial_distance": 2.0
+    },
+    "summary": {
+      "images": 71,
+      "global_pq": 0.41075709027497265,
+      "sq": 0.6736416280509552,
+      "rq": 0.6097560975609756,
+      "tp": 425,
+      "fp": 224,
+      "fn": 320,
+      "postprocessing_seconds_per_image": 0.10013671267616175
+    },
+    "per_image": [
+      {
+        "index": 453,
+        "filename": "20110322005814Mh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 369,
+        "filename": "20201022223330Lh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 416,
+        "filename": "20170310133730Ch.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 2,
+        "fn": 3
+      },
+      {
+        "index": 81,
+        "filename": "20130926060834Lh.jpeg",
+        "sum_iou": 7.553838650708373,
+        "tp": 11,
+        "fp": 0,
+        "fn": 4
+      },
+      {
+        "index": 573,
+        "filename": "20130903060834Lh.jpeg",
+        "sum_iou": 7.163012701980696,
+        "tp": 10,
+        "fp": 6,
+        "fn": 3
+      },
+      {
+        "index": 603,
+        "filename": "20180804234530Lh.jpeg",
+        "sum_iou": 2.274006137586408,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 311,
+        "filename": "20141013195854Bh.jpeg",
+        "sum_iou": 4.9980072145910075,
+        "tp": 7,
+        "fp": 1,
+        "fn": 5
+      },
+      {
+        "index": 342,
+        "filename": "20160402025254Uh.jpeg",
+        "sum_iou": 1.7943914415988638,
+        "tp": 3,
+        "fp": 3,
+        "fn": 12
+      },
+      {
+        "index": 540,
+        "filename": "20120313063154Uh.jpeg",
+        "sum_iou": 2.543759798953363,
+        "tp": 4,
+        "fp": 4,
+        "fn": 8
+      },
+      {
+        "index": 267,
+        "filename": "20140312081114Th.jpeg",
+        "sum_iou": 7.9664681351708815,
+        "tp": 12,
+        "fp": 4,
+        "fn": 12
+      },
+      {
+        "index": 702,
+        "filename": "20170417232530Lh.jpeg",
+        "sum_iou": 1.3968361797538402,
+        "tp": 2,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 533,
+        "filename": "20111215063134Lh.jpeg",
+        "sum_iou": 8.755013432737705,
+        "tp": 13,
+        "fp": 14,
+        "fn": 6
+      },
+      {
+        "index": 105,
+        "filename": "20120729122634Ch.jpeg",
+        "sum_iou": 11.630405742493604,
+        "tp": 18,
+        "fp": 12,
+        "fn": 8
+      },
+      {
+        "index": 266,
+        "filename": "20160627133734Ch.jpeg",
+        "sum_iou": 1.2498483136817635,
+        "tp": 2,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "index": 347,
+        "filename": "20170102024454Uh.jpeg",
+        "sum_iou": 0.5408976510067114,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 190,
+        "filename": "20210621133650Bh.jpeg",
+        "sum_iou": 0.7257203842049093,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 604,
+        "filename": "20160726135354Bh.jpeg",
+        "sum_iou": 2.130814469246146,
+        "tp": 3,
+        "fp": 2,
+        "fn": 2
+      },
+      {
+        "index": 593,
+        "filename": "20130221063134Lh.jpeg",
+        "sum_iou": 5.817372844372289,
+        "tp": 9,
+        "fp": 6,
+        "fn": 1
+      },
+      {
+        "index": 339,
+        "filename": "20171029150150Bh.jpeg",
+        "sum_iou": 4.925597142633425,
+        "tp": 7,
+        "fp": 5,
+        "fn": 8
+      },
+      {
+        "index": 525,
+        "filename": "20180825205030Ch.jpeg",
+        "sum_iou": 3.7299776398611204,
+        "tp": 6,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 87,
+        "filename": "20170415145450Bh.jpeg",
+        "sum_iou": 0.721117543418072,
+        "tp": 1,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 5,
+        "filename": "20170411013550Uh.jpeg",
+        "sum_iou": 0.751848808545604,
+        "tp": 1,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 442,
+        "filename": "20131017185334Ch.jpeg",
+        "sum_iou": 11.691254207788225,
+        "tp": 17,
+        "fp": 5,
+        "fn": 7
+      },
+      {
+        "index": 385,
+        "filename": "20150417082314Th.jpeg",
+        "sum_iou": 3.3758041042483375,
+        "tp": 5,
+        "fp": 1,
+        "fn": 7
+      },
+      {
+        "index": 332,
+        "filename": "20140321195814Mh.jpeg",
+        "sum_iou": 10.7377565739291,
+        "tp": 16,
+        "fp": 10,
+        "fn": 15
+      },
+      {
+        "index": 359,
+        "filename": "20141105195814Mh.jpeg",
+        "sum_iou": 8.518459251706085,
+        "tp": 13,
+        "fp": 3,
+        "fn": 3
+      },
+      {
+        "index": 590,
+        "filename": "20160724135554Bh.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 6,
+        "fn": 3
+      },
+      {
+        "index": 114,
+        "filename": "20170701235630Lh.jpeg",
+        "sum_iou": 2.6281325555021495,
+        "tp": 4,
+        "fp": 0,
+        "fn": 1
+      },
+      {
+        "index": 170,
+        "filename": "20131116185334Ch.jpeg",
+        "sum_iou": 4.291435301495702,
+        "tp": 6,
+        "fp": 5,
+        "fn": 11
+      },
+      {
+        "index": 123,
+        "filename": "20141006224634Lh.jpeg",
+        "sum_iou": 11.627553138233415,
+        "tp": 16,
+        "fp": 17,
+        "fn": 10
+      },
+      {
+        "index": 221,
+        "filename": "20120913165314Mh.jpeg",
+        "sum_iou": 3.9235296469255543,
+        "tp": 6,
+        "fp": 6,
+        "fn": 4
+      },
+      {
+        "index": 329,
+        "filename": "20141016022554Uh.jpeg",
+        "sum_iou": 5.663637041996568,
+        "tp": 8,
+        "fp": 4,
+        "fn": 13
+      },
+      {
+        "index": 277,
+        "filename": "20171121222130Lh.jpeg",
+        "sum_iou": 1.3098039969189035,
+        "tp": 2,
+        "fp": 2,
+        "fn": 0
+      },
+      {
+        "index": 349,
+        "filename": "20151228024254Uh.jpeg",
+        "sum_iou": 1.906728760401283,
+        "tp": 3,
+        "fp": 2,
+        "fn": 1
+      },
+      {
+        "index": 690,
+        "filename": "20110317082654Uh.jpeg",
+        "sum_iou": 1.2350268255832284,
+        "tp": 2,
+        "fp": 2,
+        "fn": 4
+      },
+      {
+        "index": 611,
+        "filename": "20200114073230Lh.jpeg",
+        "sum_iou": 1.707093846600111,
+        "tp": 3,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "index": 583,
+        "filename": "20110119082634Lh.jpeg",
+        "sum_iou": 2.6613894544483823,
+        "tp": 4,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 117,
+        "filename": "20121007131134Ch.jpeg",
+        "sum_iou": 3.6307445544564647,
+        "tp": 5,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 586,
+        "filename": "20160920230134Lh.jpeg",
+        "sum_iou": 2.0170013341812383,
+        "tp": 3,
+        "fp": 0,
+        "fn": 11
+      },
+      {
+        "index": 372,
+        "filename": "20130810121534Ch.jpeg",
+        "sum_iou": 3.9197345363905733,
+        "tp": 6,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 10,
+        "filename": "20160703133714Th.jpeg",
+        "sum_iou": 11.817002060626752,
+        "tp": 17,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 63,
+        "filename": "20131113185414Mh.jpeg",
+        "sum_iou": 2.046160748813131,
+        "tp": 3,
+        "fp": 4,
+        "fn": 5
+      },
+      {
+        "index": 634,
+        "filename": "20161129022454Uh.jpeg",
+        "sum_iou": 6.945187426243714,
+        "tp": 10,
+        "fp": 6,
+        "fn": 10
+      },
+      {
+        "index": 167,
+        "filename": "20210721123430Ch.jpeg",
+        "sum_iou": 2.1960555974526565,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 313,
+        "filename": "20150314081954Uh.jpeg",
+        "sum_iou": 4.001673799042276,
+        "tp": 6,
+        "fp": 5,
+        "fn": 5
+      },
+      {
+        "index": 296,
+        "filename": "20150221155154Bh.jpeg",
+        "sum_iou": 10.276299056169995,
+        "tp": 15,
+        "fp": 3,
+        "fn": 9
+      },
+      {
+        "index": 502,
+        "filename": "20140921195854Bh.jpeg",
+        "sum_iou": 3.1610034233719304,
+        "tp": 5,
+        "fp": 4,
+        "fn": 6
+      },
+      {
+        "index": 490,
+        "filename": "20140814195854Bh.jpeg",
+        "sum_iou": 3.2579767878662436,
+        "tp": 5,
+        "fp": 0,
+        "fn": 2
+      },
+      {
+        "index": 543,
+        "filename": "20130225171214Mh.jpeg",
+        "sum_iou": 0.6468867530296699,
+        "tp": 1,
+        "fp": 2,
+        "fn": 4
+      },
+      {
+        "index": 555,
+        "filename": "20130218220314Mh.jpeg",
+        "sum_iou": 3.908771420490919,
+        "tp": 6,
+        "fp": 0,
+        "fn": 3
+      },
+      {
+        "index": 535,
+        "filename": "20110211084114Th.jpeg",
+        "sum_iou": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 272,
+        "filename": "20130903141654Bh.jpeg",
+        "sum_iou": 8.174833568080306,
+        "tp": 12,
+        "fp": 4,
+        "fn": 8
+      },
+      {
+        "index": 15,
+        "filename": "20171027223030Lh.jpeg",
+        "sum_iou": 5.534607104414363,
+        "tp": 8,
+        "fp": 8,
+        "fn": 10
+      },
+      {
+        "index": 432,
+        "filename": "20111115063134Lh.jpeg",
+        "sum_iou": 5.46887925801771,
+        "tp": 8,
+        "fp": 4,
+        "fn": 1
+      },
+      {
+        "index": 621,
+        "filename": "20161205133714Th.jpeg",
+        "sum_iou": 3.2810666080145947,
+        "tp": 5,
+        "fp": 4,
+        "fn": 4
+      },
+      {
+        "index": 287,
+        "filename": "20130212153254Bh.jpeg",
+        "sum_iou": 2.960705558837433,
+        "tp": 4,
+        "fp": 3,
+        "fn": 4
+      },
+      {
+        "index": 300,
+        "filename": "20130809072814Th.jpeg",
+        "sum_iou": 3.918798794607444,
+        "tp": 6,
+        "fp": 4,
+        "fn": 2
+      },
+      {
+        "index": 195,
+        "filename": "20171004143950Bh.jpeg",
+        "sum_iou": 4.140230041901857,
+        "tp": 6,
+        "fp": 2,
+        "fn": 1
+      },
+      {
+        "index": 34,
+        "filename": "20160315133714Th.jpeg",
+        "sum_iou": 4.773277489929926,
+        "tp": 7,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "index": 547,
+        "filename": "20180301050430Lh.jpeg",
+        "sum_iou": 0.7840779853777416,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 333,
+        "filename": "20130616070414Th.jpeg",
+        "sum_iou": 3.04947909049024,
+        "tp": 5,
+        "fp": 0,
+        "fn": 4
+      },
+      {
+        "index": 49,
+        "filename": "20150302082034Lh.jpeg",
+        "sum_iou": 4.900657024304156,
+        "tp": 7,
+        "fp": 3,
+        "fn": 5
+      },
+      {
+        "index": 518,
+        "filename": "20130913142354Bh.jpeg",
+        "sum_iou": 6.600636696398801,
+        "tp": 10,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "index": 41,
+        "filename": "20120427063154Uh.jpeg",
+        "sum_iou": 3.950972196757359,
+        "tp": 6,
+        "fp": 4,
+        "fn": 10
+      },
+      {
+        "index": 553,
+        "filename": "20120206063134Lh.jpeg",
+        "sum_iou": 3.3029305050077418,
+        "tp": 5,
+        "fp": 5,
+        "fn": 12
+      },
+      {
+        "index": 113,
+        "filename": "20130219063134Lh.jpeg",
+        "sum_iou": 1.461618602121161,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      {
+        "index": 526,
+        "filename": "20151117172314Mh.jpeg",
+        "sum_iou": 6.27096937220082,
+        "tp": 10,
+        "fp": 5,
+        "fn": 13
+      },
+      {
+        "index": 141,
+        "filename": "20211225025850Uh.jpeg",
+        "sum_iou": 2.0200753243417005,
+        "tp": 3,
+        "fp": 6,
+        "fn": 0
+      },
+      {
+        "index": 548,
+        "filename": "20150806082034Lh.jpeg",
+        "sum_iou": 7.605388260502952,
+        "tp": 12,
+        "fp": 10,
+        "fn": 9
+      },
+      {
+        "index": 609,
+        "filename": "20170702133730Ch.jpeg",
+        "sum_iou": 1.1272968613741425,
+        "tp": 2,
+        "fp": 2,
+        "fn": 1
+      },
+      {
+        "index": 648,
+        "filename": "20210815140550Bh.jpeg",
+        "sum_iou": 1.200155142518176,
+        "tp": 2,
+        "fp": 1,
+        "fn": 4
+      }
+    ]
+  },
+  "delta_global_pq": 0.0008536191444028507,
+  "paired_capture_date_bootstrap_95pct_delta_interval": [
+    -0.012175331443310539,
+    0.01268389171636786
+  ],
+  "bootstrap_seed": 42,
+  "bootstrap_replicates": 5000,
+  "v2_inference": {
+    "inference_seconds_per_image": 0.2140542704227313,
+    "peak_inference_vram_mib": 608.1826171875
+  },
+  "v3_inference": {
+    "inference_seconds_per_image": 0.20621538591564184,
+    "peak_inference_vram_mib": 608.1826171875
+  },
+  "decision": "retain_official_v2_0p33",
+  "limitation": "Internal check is historically exposed for original v2 and is not independent; hidden evaluator parity unverified."
+}
