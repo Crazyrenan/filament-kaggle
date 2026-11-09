@@ -1,0 +1,56 @@
+project:
+  experiment_id: unet_resnet34_v3_hard_negative_01
+  seed: 43
+
+source:
+  checkpoint: checkpoints/unet_resnet34_v2/best_model.pth
+  expected_sha256: f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4
+  mining_artifact: reports/unet_resnet34_v3_hard_negative_01_mining.json
+
+data:
+  physical_split_seed: 42
+  train_images: 565
+  validation_tuning_images: 71
+  validation_internal_check_images: 71
+  patch_size: 512
+  sampling:
+    hard_negative: 0.3
+    foreground: 0.4
+    random: 0.3
+    hard_negative_min_radial_distance: 0.75
+  augmentation:
+    horizontal_flip_probability: 0.5
+    vertical_flip_probability: 0.5
+    random_rot90: true
+  normalization: grayscale_divide_by_255_once
+
+model:
+  architecture: Unet
+  encoder_name: resnet34
+  in_channels: 1
+  classes: 1
+  initialization: original_v2_best_checkpoint
+
+training:
+  epochs: 8
+  batch_size: 4
+  num_workers: 0
+  encoder_learning_rate: 0.000005
+  decoder_learning_rate: 0.00002
+  weight_decay: 0.0001
+  bce_weight: 0.5
+  dice_weight: 0.5
+  positive_class_weight: 6.0
+  mixed_precision: true
+  clip_grad_norm: 1.0
+  early_stopping_patience: 3
+  selection_metric: tuning_patch_dice
+  scheduler: cosine_annealing
+
+evaluation:
+  tile_size: 512
+  overlap: 128
+  batch_size: 4
+  fixed_threshold: 0.8
+  fixed_min_area: 500
+  fixed_mean_component_confidence: 0.97
