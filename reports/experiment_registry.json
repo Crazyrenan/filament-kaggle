@@ -147,6 +147,16 @@
       "tuned_internal_sq": 0.6526658142771365,
       "tuned_internal_tp": 445,
       "validation_fingerprint": "8372c9bdfd1dceb52ee2cfffaff11732d7f84f30c4b0f0c083e75b9d512b8631"
+    },
+    "unet_resnet34_v3_hard_negative_01": {
+      "best_checkpoint": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v3_hard_negative_01\\best_model.pth",
+      "best_checkpoint_sha256": "302aa58783fce9c4c664ac42aa9ece988a2f67e27545ae87768cb4c12b572a23",
+      "best_epoch": 3,
+      "best_val_dice": 0.6794256494758129,
+      "checkpoint_dir": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v3_hard_negative_01",
+      "latest_checkpoint": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v3_hard_negative_01\\latest.pth",
+      "parent_checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+      "status": "training_complete"
     }
   }
 }
