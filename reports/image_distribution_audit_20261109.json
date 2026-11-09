@@ -1,0 +1,206 @@
+{
+  "method": "grayscale JPEG, every fourth pixel; threshold>30 largest contour for approximate solar disk; no test labels",
+  "split_counts": {
+    "train": 565,
+    "validation": 142,
+    "test": 180
+  },
+  "image_summary": {
+    "train": {
+      "images": 565,
+      "disk_p5": {
+        "median": 44.0,
+        "p05": 35.0,
+        "p95": 72.79999999999995
+      },
+      "disk_median": {
+        "median": 126.0,
+        "p05": 117.2,
+        "p95": 130.0
+      },
+      "disk_p95": {
+        "median": 146.0,
+        "p05": 142.0,
+        "p95": 150.79999999999995
+      },
+      "disk_contrast_5_95": {
+        "median": 102.0,
+        "p05": 72.0,
+        "p95": 113.0
+      },
+      "disk_std": {
+        "median": 30.7309331309453,
+        "p05": 24.296591396249386,
+        "p95": 37.537002337668454
+      },
+      "disk_area_fraction": {
+        "median": 0.7020225524902344,
+        "p05": 0.6391616821289062,
+        "p95": 0.7989463806152344
+      },
+      "disk_center_x_px": {
+        "median": 1022.971435546875,
+        "p05": 973.6367553710937,
+        "p95": 1082.528173828125
+      },
+      "disk_center_y_px": {
+        "median": 1024.0059814453125,
+        "p05": 980.8937133789062,
+        "p95": 1092.5582031249999
+      },
+      "disk_radius_px": {
+        "median": 1017.395751953125,
+        "p05": 976.2512939453125,
+        "p95": 1035.4512939453125
+      },
+      "global_mean": {
+        "median": 82.53335189819336,
+        "p05": 79.9117042541504,
+        "p95": 89.13641891479492
+      },
+      "global_saturated_fraction": {
+        "median": 0.0,
+        "p05": 0.0,
+        "p95": 1.9073486328125e-05
+      }
+    },
+    "validation": {
+      "images": 142,
+      "disk_p5": {
+        "median": 44.5,
+        "p05": 35.0,
+        "p95": 75.89999999999998
+      },
+      "disk_median": {
+        "median": 126.0,
+        "p05": 117.0,
+        "p95": 130.0
+      },
+      "disk_p95": {
+        "median": 146.0,
+        "p05": 142.05,
+        "p95": 151.0
+      },
+      "disk_contrast_5_95": {
+        "median": 101.0,
+        "p05": 68.2,
+        "p95": 112.0
+      },
+      "disk_std": {
+        "median": 30.606259081744057,
+        "p05": 23.492481428807142,
+        "p95": 37.536639850565486
+      },
+      "disk_area_fraction": {
+        "median": 0.7085952758789062,
+        "p05": 0.641166877746582,
+        "p95": 0.797977066040039
+      },
+      "disk_center_x_px": {
+        "median": 1022.971435546875,
+        "p05": 978.6859344482422,
+        "p95": 1073.319158935547
+      },
+      "disk_center_y_px": {
+        "median": 1024.0,
+        "p05": 985.913330078125,
+        "p95": 1086.4896179199218
+      },
+      "disk_radius_px": {
+        "median": 1023.0139770507812,
+        "p05": 976.6147979736328,
+        "p95": 1035.4512939453125
+      },
+      "global_mean": {
+        "median": 82.63544845581055,
+        "p05": 79.91064224243163,
+        "p95": 91.14938106536864
+      },
+      "global_saturated_fraction": {
+        "median": 0.0,
+        "p05": 0.0,
+        "p95": 1.8882751464843707e-05
+      }
+    },
+    "test": {
+      "images": 180,
+      "disk_p5": {
+        "median": 44.0,
+        "p05": 35.0,
+        "p95": 74.04999999999998
+      },
+      "disk_median": {
+        "median": 126.0,
+        "p05": 117.0,
+        "p95": 130.0
+      },
+      "disk_p95": {
+        "median": 146.0,
+        "p05": 142.0,
+        "p95": 151.0
+      },
+      "disk_contrast_5_95": {
+        "median": 102.0,
+        "p05": 70.95,
+        "p95": 114.0
+      },
+      "disk_std": {
+        "median": 30.637533161141967,
+        "p05": 23.672064491136286,
+        "p95": 36.95338960606581
+      },
+      "disk_area_fraction": {
+        "median": 0.7048549652099609,
+        "p05": 0.6416515350341797,
+        "p95": 0.7992494583129883
+      },
+      "disk_center_x_px": {
+        "median": 1022.971435546875,
+        "p05": 973.9132720947266,
+        "p95": 1082.2285766601562
+      },
+      "disk_center_y_px": {
+        "median": 1024.0608520507812,
+        "p05": 984.143588256836,
+        "p95": 1095.199725341797
+      },
+      "disk_radius_px": {
+        "median": 1019.3352661132812,
+        "p05": 979.0849487304688,
+        "p95": 1035.4512939453125
+      },
+      "global_mean": {
+        "median": 82.83442878723145,
+        "p05": 80.08490867614746,
+        "p95": 91.73322334289551
+      },
+      "global_saturated_fraction": {
+        "median": 0.0,
+        "p05": 0.0,
+        "p95": 2.6702880859375e-05
+      }
+    }
+  },
+  "prediction_summary": {
+    "validation": {
+      "images": 142,
+      "instances": 1179,
+      "count_median": 8.0,
+      "count_p95": 15.0,
+      "zero_count_images": 1,
+      "area_median_px": 1370.0,
+      "area_p95_px": 6329.5
+    },
+    "test": {
+      "images": 180,
+      "instances": 1577,
+      "count_median": 9.0,
+      "count_p95": 16.0,
+      "zero_count_images": 2,
+      "area_median_px": 1304.0,
+      "area_p95_px": 6149.199999999999
+    }
+  },
+  "figure": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\figures\\image_distribution_20261109.png",
+  "caveat": "Disk contour is an appearance proxy, not a calibrated solar-limb measurement."
+}

@@ -1,0 +1,29 @@
+{
+  "status": "negative_result",
+  "decision": "retain_official_0p33_submission",
+  "selected_candidate": "rescue_area_elong_q25",
+  "official_baseline_submission_ref": 58152503,
+  "official_baseline_public_score": 0.33,
+  "official_baseline_csv": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\submission_provisional_v2_confidence_0p97_20261109T044350Z.csv",
+  "official_baseline_csv_sha256": "7e56a491d467e17d8c91570f984b28dddcf46d39ac2131adb7a2f73d82e4d265",
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "candidate_source_sha256": "8625dd7beaee3c9fc6663c2373d5ac48ba77f9d32c876e698cc9f66fcaa50454",
+  "frozen_tuning_artifact": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\adaptive_filter_tuning_frozen_20261109T052841Z.json",
+  "frozen_tuning_sha256": "338a38e8622f21ea06129192098b607430349bf9294e231136ed75cf2a4feda2",
+  "internal_check_artifact": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\adaptive_filter_internal_once_20261109T052939Z.json",
+  "internal_check_sha256": "005cadb7464b73928072f861c40a3a9df4dd913667596bdaebaeaa92885a7004",
+  "tuning_baseline_global_pq": 0.3787078876452723,
+  "tuning_candidate_global_pq": 0.3854822905715429,
+  "internal_baseline_global_pq": 0.4099034711305698,
+  "internal_candidate_global_pq": 0.4065874460189378,
+  "internal_delta_global_pq": -0.0033160251116319817,
+  "paired_capture_date_bootstrap_95pct_delta_interval": [
+    -0.00882826909425902,
+    0.0019511083386808017
+  ],
+  "bootstrap_seed": 42,
+  "bootstrap_replicates": 5000,
+  "bootstrap_capture_date_groups": 70,
+  "new_submission_generated": false,
+  "limitation": "Internal check is not independent of historical original-v2 decisions; hidden scorer parity is unverified."
+}

@@ -80,3 +80,44 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+# Image Files
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.gif
+*.webp
+*.tif
+*.tiff
+*.fits
+*.fts
+
+# Dataset Annotations
+data/**/*.json
+inputs/**/*.json
+annotations/
+labels/
+
+# Generated Data and Cache
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.parquet
+*.feather
+cache/
+.cache/
+
+# Generated Experiment Artifacts
+outputs/
+reports/figures/
+checkpoints/
+runs/
+wandb/
+tensorboard/
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.log

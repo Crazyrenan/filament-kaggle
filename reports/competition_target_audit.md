@@ -2,6 +2,10 @@
 
 Audited 2026-10-31. Local inspection used `C:\Users\Vinny\Project\Kaggle\Solar Filament Segmentation\.conda\python.exe` (Python 3.11.18); `.conda\Scripts\python.exe` does not exist in this checkout. No training or dataset modification was performed.
 
+## 2026-11-04 evaluator update
+
+The organizer's [public self-evaluation notebook v6](https://www.kaggle.com/code/azimahmadzadeh/self-evaluation-notebook) became accessible in a browser and is archived at [`reports/reference/organizer_self_evaluation_v6.ipynb`](reference/organizer_self_evaluation_v6.ipynb). Its `get_pq_score` uses **every** GT/prediction pair with IoU strictly greater than 0.5 as a hit, counts unmatched prediction columns as FP and unmatched GT rows as FN, and aggregates the IoU sum and counts over annotator-image entries before division. It does not use a one-to-one assignment. The local `organizer_pq_image` implementation matches this public notebook on synthetic parity tests, including duplicate hits and multiple annotator entries. This does not establish parity with the hidden Kaggle scorer or prove how the organizer generated its GT RLE. The benchmark now decodes source COCO polygons with `pycocotools`; on one real polygon, the previous OpenCV mask differed on 137 pixels. The original audit below remains as a dated record of what was known on October 31.
+
 ## 1. Competition target — confirmed official requirement
 
 The required prediction is **instance segmentation of individual solar filaments**: a separate binary mask for each predicted filament, rather than one foreground mask for the whole image or a multiclass map. The organizers say the competition focuses on segmentation masks, not the supplied bounding boxes, spine coordinates, or Left/Right/Unidentifiable/Ambiguous labels. [Official task and MAGFiLO description](https://www.kaggle.com/competitions/filament-segmentation-2026/overview/leaderboard-ranking), [official submission specification](https://www.kaggle.com/competitions/filament-segmentation-2026/overview/important-dates).

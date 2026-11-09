@@ -1,0 +1,95 @@
+{
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "prediction_cache": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\probability_cache\\unet_resnet34_v2\\f9422022d65c0de7",
+  "threshold": 0.8,
+  "min_area": 500,
+  "variants": {
+    "tuning": {
+      "pycoco_all_sets": {
+        "entries": 106,
+        "global_pq": 0.3517968628733501,
+        "macro_entry_pq": 0.35620920685141516,
+        "sq": 0.6616050679198809,
+        "rq": 0.5317324185248714,
+        "tp": 465,
+        "fp": 483,
+        "fn": 336
+      },
+      "pycoco_first_set": {
+        "entries": 71,
+        "global_pq": 0.36782512949400575,
+        "macro_entry_pq": 0.36802829013278454,
+        "sq": 0.6624206359428523,
+        "rq": 0.5552742616033756,
+        "tp": 329,
+        "fp": 316,
+        "fn": 211
+      },
+      "opencv_all_sets": {
+        "entries": 106,
+        "global_pq": 0.37201895494242926,
+        "macro_entry_pq": 0.3766710119079441,
+        "sq": 0.676362944068928,
+        "rq": 0.5500285877644369,
+        "tp": 481,
+        "fp": 467,
+        "fn": 320
+      },
+      "opencv_first_set": {
+        "entries": 71,
+        "global_pq": 0.38759863610145395,
+        "macro_entry_pq": 0.3888787931008517,
+        "sq": 0.6774400940711253,
+        "rq": 0.5721518987341773,
+        "tp": 339,
+        "fp": 306,
+        "fn": 201
+      },
+      "entries_with_nonexclusive_matches": 0
+    },
+    "internal_check": {
+      "pycoco_all_sets": {
+        "entries": 122,
+        "global_pq": 0.3926985825857285,
+        "macro_entry_pq": 0.4045396832155891,
+        "sq": 0.6680714079512855,
+        "rq": 0.587809293904647,
+        "tp": 487,
+        "fp": 425,
+        "fn": 258
+      },
+      "pycoco_first_set": {
+        "entries": 71,
+        "global_pq": 0.39385709611867525,
+        "macro_entry_pq": 0.40220365340833747,
+        "sq": 0.667785387882875,
+        "rq": 0.5897959183673469,
+        "tp": 289,
+        "fp": 245,
+        "fn": 157
+      },
+      "opencv_all_sets": {
+        "entries": 122,
+        "global_pq": 0.4113040912878471,
+        "macro_entry_pq": 0.42610546889271333,
+        "sq": 0.6788156167967756,
+        "rq": 0.6059143029571514,
+        "tp": 502,
+        "fp": 410,
+        "fn": 243
+      },
+      "opencv_first_set": {
+        "entries": 71,
+        "global_pq": 0.415735573550971,
+        "macro_entry_pq": 0.42746932388838715,
+        "sq": 0.6790347701332526,
+        "rq": 0.6122448979591837,
+        "tp": 300,
+        "fp": 234,
+        "fn": 146
+      },
+      "entries_with_nonexclusive_matches": 0
+    }
+  },
+  "limitations": "These are sensitivity analyses on known validation annotations, not evidence of hidden Kaggle scorer behavior. The public notebook uses all annotator-image entries and all IoU>0.5 pairs."
+}

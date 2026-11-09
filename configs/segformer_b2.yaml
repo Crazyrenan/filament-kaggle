@@ -1,0 +1,45 @@
+project:
+  name: solar-filament-segmentation
+  experiment_name: segformer-b2-template
+  seed: 42
+preprocessing:
+  patch_size: 512
+  foreground_prob: 0.7
+  in_channels: 1
+  normalization: divide_by_255
+model:
+  architecture: SegFormer
+  variant: b2
+  encoder_name: mit_b2
+  encoder_weights: nvidia/segformer-b2-finetuned-ade-512-512@de01bae28967510f9ddd496c60a969357195400c
+  input_adapter: repeat_grayscale_3x
+  classes: 1
+training:
+  epochs: 30
+  batch_size: 4
+  gradient_accumulation_steps: 1
+  num_workers: 0
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  loss:
+    bce_weight: 0.5
+    dice_weight: 0.5
+    smooth: 1.0
+    pos_weight: 8.0
+  scheduler:
+    name: CosineAnnealingLR
+    t_max: 30
+    eta_min: 0.000001
+  mixed_precision: true
+  clip_grad_norm: 1.0
+  early_stopping_patience: 7
+  checkpoint_dir: null
+  selection_metric: val_dice_patch
+evaluation:
+  tile_size: 512
+  overlap: 128
+  batch_size: 4
+postprocessing:
+  mask_threshold: 0.70
+  instance_method: connected_components
+  min_instance_area: 500

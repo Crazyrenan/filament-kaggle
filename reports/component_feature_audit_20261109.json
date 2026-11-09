@@ -1,0 +1,47 @@
+{
+  "scope": "tuning only, each prediction counted for each annotation set",
+  "threshold": 0.8,
+  "min_area": 500,
+  "features": {
+    "matched": {
+      "mean_probability": {
+        "count": 465,
+        "p10": 0.969690990447998,
+        "median": 0.9804272651672363,
+        "p90": 0.985532534122467
+      },
+      "area_px": {
+        "count": 465,
+        "p10": 661.4000000000001,
+        "median": 1512.0,
+        "p90": 5004.000000000001
+      },
+      "radial_distance": {
+        "count": 465,
+        "p10": 0.24776429657628682,
+        "median": 0.5180187667089002,
+        "p90": 0.721760435590796
+      }
+    },
+    "false_positive": {
+      "mean_probability": {
+        "count": 483,
+        "p10": 0.9471750259399414,
+        "median": 0.9711441397666931,
+        "p90": 0.981732189655304
+      },
+      "area_px": {
+        "count": 483,
+        "p10": 586.0,
+        "median": 1027.0,
+        "p90": 3587.0
+      },
+      "radial_distance": {
+        "count": 483,
+        "p10": 0.3307167160103127,
+        "median": 0.6114504016862442,
+        "p90": 0.8001230315190668
+      }
+    }
+  }
+}

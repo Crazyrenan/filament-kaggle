@@ -99,8 +99,8 @@ def test_smoke_test_isolation_and_no_overwrite(dummy_loaders, base_config, tmp_p
     assert loaded_best.get("sentinel") == "do_not_overwrite"
 
 
-def test_fresh_training_ignores_smoke_checkpoint(dummy_loaders, base_config):
-    """Verify full training with resume=True initializes freshly when latest.pth does not exist, even if smoke_checkpoint.pth exists."""
+def test_resume_rejects_smoke_only_directory(dummy_loaders, base_config):
+    """A resume request must never fall back to fresh training or smoke weights."""
     train_loader, val_loader, val_ds = dummy_loaders
     ckpt_dir = Path(base_config["training"]["checkpoint_dir"])
     ckpt_dir.mkdir(parents=True, exist_ok=True)
@@ -114,28 +114,13 @@ def test_fresh_training_ignores_smoke_checkpoint(dummy_loaders, base_config):
     }
     torch.save(smoke_state, smoke_ckpt)
 
-    # Run 1 epoch with resume=True
-    res = train_v2_model(
-        config=base_config,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        val_dataset=val_ds,
-        val_indices=[0, 1],
-        device="cpu",
-        resume=True,
-        max_epochs=1,
-        smoke_test=False,
-    )
-
-    latest_pth = ckpt_dir / "latest.pth"
-    assert latest_pth.is_file()
-
-    loaded = torch.load(latest_pth)
-    # Must have trained epoch 1, NOT resumed smoke_test epoch 0
-    assert loaded["epoch"] == 1
-    assert len(loaded["history"]) == 1
-    assert loaded["history"][0]["epoch"] == 1
-    assert "smoke_test" not in loaded["history"][0]
+    with pytest.raises(FileNotFoundError, match="latest.pth"):
+        train_v2_model(
+            config=base_config, train_loader=train_loader, val_loader=val_loader,
+            val_dataset=val_ds, val_indices=[0, 1], device="cpu", resume=True,
+            max_epochs=1, smoke_test=False,
+        )
+    assert not (ckpt_dir / "latest.pth").exists()
 
 
 def test_genuine_resumption_restores_all_training_components(dummy_loaders, base_config):
@@ -169,6 +154,7 @@ def test_genuine_resumption_restores_all_training_components(dummy_loaders, base
     }
     latest_pth = ckpt_dir / "latest.pth"
     torch.save(prior_state, latest_pth)
+    torch.save(prior_state, ckpt_dir / "best_model.pth")
 
     # Resume for 1 additional epoch (epoch 3)
     res = train_v2_model(
@@ -200,6 +186,7 @@ def test_completed_resume_does_not_train_or_replace_checkpoint(dummy_loaders, ba
     model = build_model(pretrained=False, in_channels=1, classes=1)
     latest = ckpt_dir / "latest.pth"
     torch.save({"epoch": 2, "model_state_dict": model.state_dict(), "best_val_dice": 0.7, "history": []}, latest)
+    torch.save({"epoch": 2, "model_state_dict": model.state_dict(), "best_val_dice": 0.7, "history": []}, ckpt_dir / "best_model.pth")
     before = latest.read_bytes()
     result = train_v2_model(base_config, train_loader, val_loader, val_ds, [0, 1], device="cpu", resume=True)
     assert result["status"] == "already_completed"

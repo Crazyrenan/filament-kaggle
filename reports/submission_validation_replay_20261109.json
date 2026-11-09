@@ -1,0 +1,19 @@
+{
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "submission_csv_sha256": "2d9bd6500ed014c46e2a20e40b737a7267e30d76623655266a0f1631edab4b6c",
+  "validation_images": 71,
+  "generated_rows": 534,
+  "global_pq": 0.3926985825857285,
+  "sq": 0.6680714079512855,
+  "rq": 0.587809293904647,
+  "tp": 487,
+  "fp": 425,
+  "fn": 258,
+  "benchmark_global_pq": 0.39269858258572854,
+  "absolute_difference": 5.551115123125783e-17,
+  "test_image_orientation_checks": [
+    "20110120105534Ch",
+    "20220728185352Th"
+  ],
+  "note": "Exact generate_submission path replayed without writing a new CSV."
+}

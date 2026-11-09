@@ -1,0 +1,15 @@
+{
+  "submission_provenance": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\submission_original_v2_initial_20261104T023103Z.provenance.json",
+  "csv": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\submission_original_v2_initial_20261104T023103Z.csv",
+  "csv_sha256": "3b67c1acb4d4810c9a11de38f6f3b9a2f0f1ed45307b477d98689fda175b0fb5",
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "source_sha256": {
+    "src/filament_seg/model.py": "e51eea635bbbf8550c439eabe7b977256d7a19913bc753771e9a71739f9a1dbc",
+    "src/filament_seg/train.py": "2a7e1662834b0d838e2fa07694f743b3da13676132498628a7b9e38a5885a270",
+    "src/filament_seg/inference.py": "6e470f2c5dbd984843e5ba8b95788371d0c97847ae777617e1895dbf29647ceb",
+    "src/filament_seg/submission.py": "ce4cba9492938cf2d46cb795bd296c9733c9bb3f2c05268a66539ed805ef21dc",
+    "src/filament_seg/utils.py": "354300cfca021dd71adf48e35ce982d8cb036dfdac78d429e80f601539d9585b"
+  },
+  "recorded_at_utc": "2026-11-04T09:30:05.104822+00:00",
+  "note": "Source hashes recorded after initial generation; these source files were not edited between generation and this record. The CSV was validated locally, not submitted."
+}

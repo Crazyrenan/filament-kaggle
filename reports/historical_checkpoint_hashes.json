@@ -1,0 +1,37 @@
+[
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34\\best_model.pth",
+    "sha256": "e3e7218969ad35e880c2bd80c2cc53ee5496503f2b2fa65abcba9d1606e587cd",
+    "bytes": 293457227
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34\\epoch_001.pth",
+    "sha256": "ef1e73d4000c8d1cb578f811d031cc93c1e9e12f70b9255e1ce9007265ae4ba1",
+    "bytes": 293455563
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34\\latest.pth",
+    "sha256": "f7329c3ae7cc53a4ee8c12702126ca7127c94d923d9d7beed19bb00ba6f2e0bc",
+    "bytes": 293449675
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v2\\best_model.pth",
+    "sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+    "bytes": 293461963
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v2\\latest.pth",
+    "sha256": "670c9a0837f0f8248471a7f1ff1b104d8c1a2afe7ac9bc7e1ef3ce5af4d0d75b",
+    "bytes": 293459211
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v2\\smoke_checkpoint.pth",
+    "sha256": "6551611b469bf03dff419da87c316fe3b6836c93bcce4e96a9168fbeb5a3482d",
+    "bytes": 293463371
+  },
+  {
+    "path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v2\\smoke_runs\\smoke_1a5822aac6364264a3ab996de0ad1b4f.pth",
+    "sha256": "3e0ed72af9cce39504598a6c6968b5c7778a0d31e412e68c50ae4a2be9d0c957",
+    "bytes": 293479243
+  }
+]

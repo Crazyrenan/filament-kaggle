@@ -1,0 +1,56 @@
+{
+  "status": "provisional",
+  "experiment_id": "unet_resnet34_v2",
+  "architecture": "Unet",
+  "checkpoint": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\checkpoints\\unet_resnet34_v2\\best_model.pth",
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "model_config": {},
+  "preprocessing": {
+    "input": "grayscale",
+    "normalization": "divide_by_255",
+    "input_adapter": null
+  },
+  "tiling": {
+    "tile_size": 512,
+    "overlap": 128,
+    "batch_size": 4
+  },
+  "postprocessing": {
+    "threshold": 0.8,
+    "min_area": 500,
+    "instance_method": "connected_components"
+  },
+  "evaluation_protocol": "public notebook v6 PQ across all annotation sets; tuning-only optimization; existing validation internal check",
+  "internal_check_global_pq": 0.39269858258572854,
+  "internal_check_sq": 0.6680714079512856,
+  "internal_check_rq": 0.587809293904647,
+  "evaluator": {
+    "implementation": "filament_seg.official_metric.organizer_pq_image",
+    "iou_threshold": 0.5,
+    "inclusive": false,
+    "matching": "all qualifying GT/prediction pairs, no one-to-one assignment",
+    "annotation_sets": "all recorded annotator-image sets per physical image",
+    "ground_truth_decoding": "pycocotools.frPyObjects plus merge on source COCO polygons",
+    "public_notebook_url": "https://www.kaggle.com/code/azimahmadzadeh/self-evaluation-notebook",
+    "public_notebook_version": 6,
+    "public_notebook_sha256": "d4956c0e92cf999dc4417da40f3b61f6e5705e7d596c021ad22cf272507101c8",
+    "hidden_kaggle_scorer_parity": "unverified",
+    "limitations": "Pair counting is parity-tested against the public self-evaluation notebook on synthetic cases. The hidden scorer's GT RLE generation remains unverified. Original v2 previously used all 142 validation images; internal check is not independent."
+  },
+  "validation_fingerprint": "8372c9bdfd1dceb52ee2cfffaff11732d7f84f30c4b0f0c083e75b9d512b8631",
+  "code_revision": {
+    "git_commit": "d519c1a1fdbe358aa900668b366306d3fc64f4f6",
+    "source_sha256": {
+      "src\\filament_seg\\benchmark.py": "7f1a78c4967f0a6ce63db84cb110b2bc156ce8eb10a7134a7d9b6aa9095dbf6e",
+      "src\\filament_seg\\evaluate.py": "11bac26235d020205ac6d25c4791f12ccd4f7146b19ae0a64015ba003073f0cf",
+      "src\\filament_seg\\official_metric.py": "e5d7493d1981602dd663e9c6dd980af3c9d295aa7b653a4850205fd18d708c41",
+      "src\\filament_seg\\inference.py": "6e470f2c5dbd984843e5ba8b95788371d0c97847ae777617e1895dbf29647ceb",
+      "src\\filament_seg\\submission.py": "ce4cba9492938cf2d46cb795bd296c9733c9bb3f2c05268a66539ed805ef21dc",
+      "src\\filament_seg\\dataset.py": "b79c291767d1224c17471e30ca975a8285f78ca46f3d5fce5c5b6cdd76d3f5db",
+      "src\\filament_seg\\transformer.py": "aa46d933e5ffbaf28bcf1a8cb319b6421e76421cd1f4f0661edb4824ffd84e1c"
+    }
+  },
+  "benchmark_report": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\model_benchmark_20261104T094701Z.json",
+  "benchmark_report_sha256": "ace685f18bccfb305400711449dbc57867937d5d2c60dcb139e1235f9a2c3668",
+  "created_at_utc": "2026-11-04T09:47:01.914953+00:00"
+}

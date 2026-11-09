@@ -305,7 +305,7 @@ def train_v2_model(
         val_dataset: SolarFilamentDataset instance for full-resolution tiled evaluation.
         val_indices: Indices of validation images.
         device: Execution device (e.g. 'cuda').
-        resume: Whether to resume from latest.pth if present.
+        resume: Require and resume the selected experiment's latest.pth.
         max_epochs: Optional override for total training epochs.
         smoke_test: If True, executes 2 batches and validates checkpoint saving/loading.
 
@@ -315,10 +315,27 @@ def train_v2_model(
     dev = torch.device(device)
     train_cfg = config.get("training", {})
     total_epochs = max_epochs if max_epochs is not None else train_cfg.get("epochs", 30)
-    ckpt_dir = project_path(train_cfg.get("checkpoint_dir", "checkpoints/unet_resnet34_v2"))
-    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    configured_dir = train_cfg.get("checkpoint_dir")
+    if not configured_dir:
+        raise ValueError("training.checkpoint_dir is unset; allocate a fresh experiment first")
+    ckpt_dir = project_path(configured_dir)
     latest_ckpt_path = ckpt_dir / "latest.pth"
     best_ckpt_path = ckpt_dir / "best_model.pth"
+    if smoke_test:
+        ckpt_dir.mkdir(parents=True, exist_ok=True)
+    elif resume:
+        if not latest_ckpt_path.is_file():
+            raise FileNotFoundError(f"Resume requires the selected experiment's latest.pth: {latest_ckpt_path}")
+    elif train_cfg.get("track_experiment"):
+        from filament_seg.experiment_tracking import load_experiment_config
+
+        saved = load_experiment_config(ckpt_dir.name, checkpoint_root=ckpt_dir.parent)
+        if saved != config:
+            raise ValueError("Effective training configuration differs from allocated config.yaml")
+        if latest_ckpt_path.exists() or best_ckpt_path.exists():
+            raise FileExistsError(f"Fresh training would overwrite existing weights in {ckpt_dir}")
+    else:
+        ckpt_dir.mkdir(parents=True, exist_ok=False)
 
     # Instantiate model with ImageNet pretraining
     pretrained = config.get("model", {}).get("encoder_weights") == "imagenet"
@@ -439,6 +456,10 @@ def train_v2_model(
                 raise ValueError(f"Checkpoint experiment mismatch: {recorded_experiment} != {expected_experiment}")
             start_epoch = checkpoint.get("epoch", 0) + 1
             best_val_dice = checkpoint.get("best_val_dice", 0.0)
+            if best_val_dice > 0 and not best_ckpt_path.is_file():
+                raise FileNotFoundError(
+                    f"Resume checkpoint records a best metric but best_model.pth is missing: {best_ckpt_path}"
+                )
             epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
             history = checkpoint.get("history", [])
             logger.info(
@@ -448,10 +469,7 @@ def train_v2_model(
                 len(history),
             )
         else:
-            logger.info(
-                "Resume requested but no checkpoint found at %s. Initializing fresh training run with ImageNet-pretrained ResNet34 encoder from epoch 1.",
-                latest_ckpt_path,
-            )
+            raise FileNotFoundError(f"Resume checkpoint disappeared: {latest_ckpt_path}")
     else:
         if latest_ckpt_path.exists() or best_ckpt_path.exists():
             raise FileExistsError(
@@ -492,7 +510,7 @@ def train_v2_model(
         current_lr = optimizer.param_groups[0]["lr"]
         scheduler.step()
 
-        is_best = current_val_dice > best_val_dice
+        is_best = not best_ckpt_path.is_file() or current_val_dice > best_val_dice
         if is_best:
             best_val_dice = current_val_dice
             epochs_without_improvement = 0
@@ -525,6 +543,10 @@ def train_v2_model(
             "checkpoint_dir": str(ckpt_dir),
         }
         save_checkpoint(state, latest_ckpt_path, is_best=is_best)
+        if train_cfg.get("track_experiment"):
+            from filament_seg.experiment_tracking import record_training_progress
+
+            record_training_progress(config, history, status="running")
 
         logger.info(
             "Epoch %d/%d - Train Loss: %.4f | Val Loss: %.4f | Val Dice: %.4f (Best: %.4f) | LR: %.6f | Time: %.1fs",
@@ -541,6 +563,14 @@ def train_v2_model(
         if epochs_without_improvement >= patience:
             logger.info("Early stopping triggered after %d epochs without improvement.", patience)
             break
+
+    if train_cfg.get("track_experiment"):
+        from filament_seg.experiment_tracking import record_training_progress
+
+        record_training_progress(
+            config, history,
+            status="early_stopped" if epochs_without_improvement >= patience else "completed",
+        )
 
     return {
         "model": model,

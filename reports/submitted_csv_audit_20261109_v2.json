@@ -1,0 +1,28 @@
+{
+  "kaggle_submission_ref": 58150471,
+  "reported_public_score": 0.31,
+  "csv": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\submission_provisional_unet_resnet34_v2_20261104T094726Z.csv",
+  "csv_sha256": "2d9bd6500ed014c46e2a20e40b737a7267e30d76623655266a0f1631edab4b6c",
+  "provenance": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\outputs\\submission_provisional_unet_resnet34_v2_20261104T094726Z.provenance.json",
+  "checkpoint_sha256": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+  "rows": 1577,
+  "test_images": 180,
+  "images_with_predictions": 178,
+  "images_without_predictions": 2,
+  "row_count_per_image": {
+    "min": 0,
+    "median": 9.0,
+    "max": 23
+  },
+  "instance_area_px": {
+    "min": 500,
+    "median": 1304.0,
+    "p95": 6149.199999999999,
+    "max": 20627
+  },
+  "all_rles_round_trip": true,
+  "all_masks_2048_square": true,
+  "all_instance_indices_consecutive_per_image": true,
+  "all_identifiers_match_test_stems": true,
+  "orientation_note": "COCO Fortran-order decode/re-encode is exact. Because masks are square, model-output alignment needs a separate image comparison."
+}
