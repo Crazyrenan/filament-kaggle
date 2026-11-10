@@ -1,0 +1,1333 @@
+{
+  "phase": "frozen_after_tuning",
+  "status": "provisional",
+  "experiment_id": "ensemble_v2_v3_01",
+  "created_at_utc": "2026-11-10T00:12:41.158652+00:00",
+  "preflight_path": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\ensemble_v2_v3_01_preflight.json",
+  "preflight_sha256": "ac7751d75ebb336e3164c862557b33116be3bdc767eb9f500633c597d031d4cb",
+  "checkpoint_sha256": {
+    "v2": "f9422022d65c0de79c61020b9ce5d81082c46b8919ddb5b1a6880624b02018c4",
+    "v3": "302aa58783fce9c4c664ac42aa9ece988a2f67e27545ae87768cb4c12b572a23"
+  },
+  "source_sha256": {
+    "scripts\\run_probability_ensemble_v2_v3.py": "68d5745521fcffe236f1c55fb5b872c145f70626ac6b311628f2ae3781e9cfea",
+    "src\\filament_seg\\probability_ensemble.py": "eed4ff7bd029ac083fd6c13a53e294ed34c3fb1932dee20fead0848c42ea6e5b",
+    "src\\filament_seg\\inference.py": "6e470f2c5dbd984843e5ba8b95788371d0c97847ae777617e1895dbf29647ceb",
+    "src\\filament_seg\\official_metric.py": "e5d7493d1981602dd663e9c6dd980af3c9d295aa7b653a4850205fd18d708c41",
+    "src\\filament_seg\\benchmark.py": "7f1a78c4967f0a6ce63db84cb110b2bc156ce8eb10a7134a7d9b6aa9095dbf6e",
+    "src\\filament_seg\\submission.py": "ce4cba9492938cf2d46cb795bd296c9733c9bb3f2c05268a66539ed805ef21dc",
+    "scripts\\generate_component_filter_submission.py": "20331b33f6fb48083db1ed6f24e3c57eb7a0b7d2fcf53da5ec4200dd6ccf360f"
+  },
+  "grid": [
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.25,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.5,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.75,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.8,
+      "min_area": 300,
+      "mean_confidence": 0.97
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.96
+    },
+    {
+      "v2_weight": 0.75,
+      "threshold": 0.8,
+      "min_area": 500,
+      "mean_confidence": 0.97
+    }
+  ],
+  "grid_results": [
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3865025781358294,
+        "sq": 0.6705305017780189,
+        "rq": 0.5764131193300768,
+        "tp": 413,
+        "fp": 219,
+        "fn": 388
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3029301735006049,
+        "sq": 0.6852573682816103,
+        "rq": 0.44206773618538325,
+        "tp": 248,
+        "fp": 73,
+        "fn": 553
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3788881395587916,
+        "sq": 0.6707866552392892,
+        "rq": 0.5648414985590778,
+        "tp": 392,
+        "fp": 195,
+        "fn": 409
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.2972059245182822,
+        "sq": 0.6852929995090971,
+        "rq": 0.4336917562724014,
+        "tp": 242,
+        "fp": 73,
+        "fn": 559
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.39175402484206523,
+        "sq": 0.6664123411599088,
+        "rq": 0.5878552971576227,
+        "tp": 455,
+        "fp": 292,
+        "fn": 346
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.36034966489273956,
+        "sq": 0.6775588769462075,
+        "rq": 0.5318352059925093,
+        "tp": 355,
+        "fp": 179,
+        "fn": 446
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3828142606503615,
+        "sq": 0.666296384947134,
+        "rq": 0.5745405037440435,
+        "tp": 422,
+        "fp": 246,
+        "fn": 379
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.25,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.34988758955462346,
+        "sq": 0.677319706943801,
+        "rq": 0.5165767154973014,
+        "tp": 335,
+        "fp": 161,
+        "fn": 466
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.38991428427801333,
+        "sq": 0.6674574380175714,
+        "rq": 0.5841784989858012,
+        "tp": 432,
+        "fp": 246,
+        "fn": 369
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3351618168999166,
+        "sq": 0.6811169804457626,
+        "rq": 0.4920767306088407,
+        "tp": 295,
+        "fp": 103,
+        "fn": 506
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.38402154117133924,
+        "sq": 0.6669111958934302,
+        "rq": 0.5758211041229909,
+        "tp": 412,
+        "fp": 218,
+        "fn": 389
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.32962425017294905,
+        "sq": 0.681070314817278,
+        "rq": 0.4839797639123103,
+        "tp": 287,
+        "fp": 98,
+        "fn": 514
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.38872053091688114,
+        "sq": 0.6651159733545337,
+        "rq": 0.5844402277039848,
+        "tp": 462,
+        "fp": 318,
+        "fn": 339
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.37996335397800596,
+        "sq": 0.6721321451050333,
+        "rq": 0.5653104925053534,
+        "tp": 396,
+        "fp": 204,
+        "fn": 405
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3782561489641868,
+        "sq": 0.6652701823702676,
+        "rq": 0.5685752330226365,
+        "tp": 427,
+        "fp": 274,
+        "fn": 374
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.5,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3699404850630684,
+        "sq": 0.6716299180690467,
+        "rq": 0.5508100147275405,
+        "tp": 374,
+        "fp": 183,
+        "fn": 427
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.39342608603237633,
+        "sq": 0.6659695537940339,
+        "rq": 0.5907568653717348,
+        "tp": 441,
+        "fp": 251,
+        "fn": 360
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.75,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3516529867001965,
+        "sq": 0.678960766628841,
+        "rq": 0.5179282868525896,
+        "tp": 325,
+        "fp": 129,
+        "fn": 476
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.38831564764687365,
+        "sq": 0.6648295152248015,
+        "rq": 0.5840830449826989,
+        "tp": 422,
+        "fp": 222,
+        "fn": 379
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.75,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.34450861632924473,
+        "sq": 0.6791112341058914,
+        "rq": 0.5072933549432739,
+        "tp": 313,
+        "fp": 120,
+        "fn": 488
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3824319202046983,
+        "sq": 0.6667725362010487,
+        "rq": 0.5735567970204841,
+        "tp": 462,
+        "fp": 348,
+        "fn": 339
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.8,
+        "min_area": 300,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.387001497332033,
+        "sq": 0.6721847435802811,
+        "rq": 0.5757368060315284,
+        "tp": 420,
+        "fp": 238,
+        "fn": 381
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.96
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.3783421049265453,
+        "sq": 0.6666648814395333,
+        "rq": 0.5675146771037182,
+        "tp": 435,
+        "fp": 297,
+        "fn": 366
+      }
+    },
+    {
+      "config": {
+        "v2_weight": 0.75,
+        "threshold": 0.8,
+        "min_area": 500,
+        "mean_confidence": 0.97
+      },
+      "summary": {
+        "images": 71,
+        "global_pq": 0.38050132420534283,
+        "sq": 0.67158483722243,
+        "rq": 0.56657223796034,
+        "tp": 400,
+        "fp": 211,
+        "fn": 401
+      }
+    }
+  ],
+  "selection_rule": "tuning Global PQ descending, SQ descending, FP ascending, then v2 weight/confidence/area/threshold descending",
+  "selected_config": {
+    "v2_weight": 0.75,
+    "threshold": 0.75,
+    "min_area": 300,
+    "mean_confidence": 0.96
+  },
+  "selected_tuning_direct": {
+    "config": {
+      "v2_weight": 0.75,
+      "threshold": 0.75,
+      "min_area": 300,
+      "mean_confidence": 0.96
+    },
+    "summary": {
+      "images": 71,
+      "global_pq": 0.39342608603237633,
+      "sq": 0.6659695537940339,
+      "rq": 0.5907568653717348,
+      "tp": 441,
+      "fp": 251,
+      "fn": 360,
+      "cpu_blend_and_postprocess_seconds_per_image": 0.1169358887328458
+    },
+    "per_image": [
+      {
+        "index": 508,
+        "filename": "20111223085314Th.jpeg",
+        "tp": 7,
+        "fp": 2,
+        "fn": 2,
+        "sum_iou": 4.70556697160977
+      },
+      {
+        "index": 303,
+        "filename": "20110511063154Uh.jpeg",
+        "tp": 2,
+        "fp": 1,
+        "fn": 4,
+        "sum_iou": 1.226963576272442
+      },
+      {
+        "index": 617,
+        "filename": "20111214063134Lh.jpeg",
+        "tp": 10,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 6.385595461708356
+      },
+      {
+        "index": 76,
+        "filename": "20110530122834Ch.jpeg",
+        "tp": 7,
+        "fp": 2,
+        "fn": 3,
+        "sum_iou": 4.591508930253003
+      },
+      {
+        "index": 675,
+        "filename": "20161229133734Ch.jpeg",
+        "tp": 4,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 2.492962591263862
+      },
+      {
+        "index": 628,
+        "filename": "20160628152654Bh.jpeg",
+        "tp": 5,
+        "fp": 3,
+        "fn": 5,
+        "sum_iou": 3.6679390107271104
+      },
+      {
+        "index": 122,
+        "filename": "20171014133730Ch.jpeg",
+        "tp": 2,
+        "fp": 1,
+        "fn": 1,
+        "sum_iou": 1.3535428761777863
+      },
+      {
+        "index": 111,
+        "filename": "20150518145654Bh.jpeg",
+        "tp": 18,
+        "fp": 4,
+        "fn": 23,
+        "sum_iou": 12.099526077236963
+      },
+      {
+        "index": 396,
+        "filename": "20131107043054Uh.jpeg",
+        "tp": 13,
+        "fp": 14,
+        "fn": 14,
+        "sum_iou": 8.767610744131506
+      },
+      {
+        "index": 602,
+        "filename": "20130326063134Lh.jpeg",
+        "tp": 4,
+        "fp": 2,
+        "fn": 1,
+        "sum_iou": 2.5638388689419687
+      },
+      {
+        "index": 279,
+        "filename": "20161108021454Uh.jpeg",
+        "tp": 2,
+        "fp": 2,
+        "fn": 1,
+        "sum_iou": 1.167555560190641
+      },
+      {
+        "index": 615,
+        "filename": "20140712195854Bh.jpeg",
+        "tp": 4,
+        "fp": 4,
+        "fn": 5,
+        "sum_iou": 2.6333868268127056
+      },
+      {
+        "index": 375,
+        "filename": "20130411115134Ch.jpeg",
+        "tp": 8,
+        "fp": 2,
+        "fn": 9,
+        "sum_iou": 5.192333935528356
+      },
+      {
+        "index": 452,
+        "filename": "20120813164714Mh.jpeg",
+        "tp": 2,
+        "fp": 1,
+        "fn": 3,
+        "sum_iou": 1.3230928976365082
+      },
+      {
+        "index": 1,
+        "filename": "20111116063134Lh.jpeg",
+        "tp": 23,
+        "fp": 7,
+        "fn": 10,
+        "sum_iou": 14.93591654821204
+      },
+      {
+        "index": 529,
+        "filename": "20150916055454Uh.jpeg",
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "sum_iou": 2.8066221694474605
+      },
+      {
+        "index": 662,
+        "filename": "20200110073230Lh.jpeg",
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "sum_iou": 1.8718911525245336
+      },
+      {
+        "index": 189,
+        "filename": "20150531082034Lh.jpeg",
+        "tp": 13,
+        "fp": 5,
+        "fn": 6,
+        "sum_iou": 8.640162491455389
+      },
+      {
+        "index": 450,
+        "filename": "20140111224134Lh.jpeg",
+        "tp": 2,
+        "fp": 16,
+        "fn": 7,
+        "sum_iou": 1.2014132932939954
+      },
+      {
+        "index": 491,
+        "filename": "20161201160954Bh.jpeg",
+        "tp": 2,
+        "fp": 2,
+        "fn": 5,
+        "sum_iou": 1.1336234646243297
+      },
+      {
+        "index": 500,
+        "filename": "20130404063134Lh.jpeg",
+        "tp": 8,
+        "fp": 3,
+        "fn": 1,
+        "sum_iou": 5.173584536086111
+      },
+      {
+        "index": 403,
+        "filename": "20121024164714Mh.jpeg",
+        "tp": 5,
+        "fp": 6,
+        "fn": 3,
+        "sum_iou": 3.48209247968673
+      },
+      {
+        "index": 503,
+        "filename": "20131028190734Ch.jpeg",
+        "tp": 3,
+        "fp": 9,
+        "fn": 2,
+        "sum_iou": 1.9346066125712644
+      },
+      {
+        "index": 39,
+        "filename": "20150819082014Th.jpeg",
+        "tp": 2,
+        "fp": 4,
+        "fn": 6,
+        "sum_iou": 1.284118191748313
+      },
+      {
+        "index": 52,
+        "filename": "20170809164910Mh.jpeg",
+        "tp": 1,
+        "fp": 3,
+        "fn": 2,
+        "sum_iou": 0.5395894428152492
+      },
+      {
+        "index": 42,
+        "filename": "20170327143550Bh.jpeg",
+        "tp": 4,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 2.4540902346713755
+      },
+      {
+        "index": 695,
+        "filename": "20150919165814Mh.jpeg",
+        "tp": 5,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 3.84818391185592
+      },
+      {
+        "index": 212,
+        "filename": "20131101222734Lh.jpeg",
+        "tp": 10,
+        "fp": 8,
+        "fn": 6,
+        "sum_iou": 6.6933408540967685
+      },
+      {
+        "index": 188,
+        "filename": "20140205180154Bh.jpeg",
+        "tp": 28,
+        "fp": 8,
+        "fn": 13,
+        "sum_iou": 18.92487475017491
+      },
+      {
+        "index": 69,
+        "filename": "20140719071414Th.jpeg",
+        "tp": 1,
+        "fp": 1,
+        "fn": 7,
+        "sum_iou": 0.6870799731182796
+      },
+      {
+        "index": 187,
+        "filename": "20121218063534Lh.jpeg",
+        "tp": 8,
+        "fp": 16,
+        "fn": 16,
+        "sum_iou": 4.947637269627158
+      },
+      {
+        "index": 384,
+        "filename": "20200116073250Uh.jpeg",
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "sum_iou": 0
+      },
+      {
+        "index": 440,
+        "filename": "20111011112054Uh.jpeg",
+        "tp": 2,
+        "fp": 2,
+        "fn": 0,
+        "sum_iou": 1.269756617105064
+      },
+      {
+        "index": 410,
+        "filename": "20181023232430Lh.jpeg",
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "sum_iou": 0
+      },
+      {
+        "index": 366,
+        "filename": "20170322015550Uh.jpeg",
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "sum_iou": 0.6657115568290354
+      },
+      {
+        "index": 475,
+        "filename": "20130716162214Mh.jpeg",
+        "tp": 3,
+        "fp": 5,
+        "fn": 11,
+        "sum_iou": 2.147053196773601
+      },
+      {
+        "index": 290,
+        "filename": "20171005144050Bh.jpeg",
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "sum_iou": 0.6062683643486778
+      },
+      {
+        "index": 137,
+        "filename": "20150527161214Mh.jpeg",
+        "tp": 6,
+        "fp": 0,
+        "fn": 3,
+        "sum_iou": 4.492477112314585
+      },
+      {
+        "index": 451,
+        "filename": "20150527082014Th.jpeg",
+        "tp": 4,
+        "fp": 1,
+        "fn": 2,
+        "sum_iou": 3.1910220971661865
+      },
+      {
+        "index": 286,
+        "filename": "20220724185352Mh.jpeg",
+        "tp": 5,
+        "fp": 0,
+        "fn": 2,
+        "sum_iou": 3.087183850444089
+      },
+      {
+        "index": 637,
+        "filename": "20130705161714Mh.jpeg",
+        "tp": 5,
+        "fp": 8,
+        "fn": 5,
+        "sum_iou": 3.0733510694905952
+      },
+      {
+        "index": 275,
+        "filename": "20150113155654Bh.jpeg",
+        "tp": 9,
+        "fp": 2,
+        "fn": 5,
+        "sum_iou": 6.051120956198574
+      },
+      {
+        "index": 597,
+        "filename": "20110616133454Bh.jpeg",
+        "tp": 8,
+        "fp": 4,
+        "fn": 2,
+        "sum_iou": 5.096549537804528
+      },
+      {
+        "index": 437,
+        "filename": "20140709195814Mh.jpeg",
+        "tp": 5,
+        "fp": 2,
+        "fn": 3,
+        "sum_iou": 3.648850701780236
+      },
+      {
+        "index": 681,
+        "filename": "20111107063154Uh.jpeg",
+        "tp": 6,
+        "fp": 0,
+        "fn": 3,
+        "sum_iou": 3.9376325273657207
+      },
+      {
+        "index": 687,
+        "filename": "20131011195414Mh.jpeg",
+        "tp": 11,
+        "fp": 7,
+        "fn": 13,
+        "sum_iou": 7.327275709735805
+      },
+      {
+        "index": 671,
+        "filename": "20171103222630Lh.jpeg",
+        "tp": 3,
+        "fp": 1,
+        "fn": 1,
+        "sum_iou": 1.8639110634527447
+      },
+      {
+        "index": 177,
+        "filename": "20171025133730Ch.jpeg",
+        "tp": 3,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 2.0773364997329393
+      },
+      {
+        "index": 622,
+        "filename": "20140225163314Th.jpeg",
+        "tp": 13,
+        "fp": 3,
+        "fn": 9,
+        "sum_iou": 8.005500480818512
+      },
+      {
+        "index": 646,
+        "filename": "20110902073614Th.jpeg",
+        "tp": 6,
+        "fp": 0,
+        "fn": 3,
+        "sum_iou": 4.174068219811423
+      },
+      {
+        "index": 528,
+        "filename": "20200619123010Th.jpeg",
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "sum_iou": 0
+      },
+      {
+        "index": 484,
+        "filename": "20110815140454Bh.jpeg",
+        "tp": 10,
+        "fp": 4,
+        "fn": 5,
+        "sum_iou": 6.849926551113898
+      },
+      {
+        "index": 227,
+        "filename": "20120414115434Ch.jpeg",
+        "tp": 12,
+        "fp": 0,
+        "fn": 2,
+        "sum_iou": 7.949796219550306
+      },
+      {
+        "index": 57,
+        "filename": "20110410141654Bh.jpeg",
+        "tp": 8,
+        "fp": 7,
+        "fn": 2,
+        "sum_iou": 5.456343531432937
+      },
+      {
+        "index": 599,
+        "filename": "20151128133734Ch.jpeg",
+        "tp": 6,
+        "fp": 6,
+        "fn": 9,
+        "sum_iou": 3.6915347372834697
+      },
+      {
+        "index": 673,
+        "filename": "20151128133714Th.jpeg",
+        "tp": 2,
+        "fp": 1,
+        "fn": 1,
+        "sum_iou": 1.4222493449390394
+      },
+      {
+        "index": 182,
+        "filename": "20151128222134Lh.jpeg",
+        "tp": 4,
+        "fp": 4,
+        "fn": 5,
+        "sum_iou": 2.403520772002378
+      },
+      {
+        "index": 102,
+        "filename": "20220718185352Mh.jpeg",
+        "tp": 4,
+        "fp": 2,
+        "fn": 8,
+        "sum_iou": 2.8411966313215724
+      },
+      {
+        "index": 504,
+        "filename": "20140116180214Mh.jpeg",
+        "tp": 11,
+        "fp": 2,
+        "fn": 2,
+        "sum_iou": 7.450434625777371
+      },
+      {
+        "index": 370,
+        "filename": "20120223152054Bh.jpeg",
+        "tp": 5,
+        "fp": 2,
+        "fn": 4,
+        "sum_iou": 3.5885256952342957
+      },
+      {
+        "index": 534,
+        "filename": "20220617185352Mh.jpeg",
+        "tp": 2,
+        "fp": 1,
+        "fn": 2,
+        "sum_iou": 1.1744256452292834
+      },
+      {
+        "index": 106,
+        "filename": "20140603070414Th.jpeg",
+        "tp": 5,
+        "fp": 1,
+        "fn": 3,
+        "sum_iou": 3.3277969722467686
+      },
+      {
+        "index": 678,
+        "filename": "20150927111834Ch.jpeg",
+        "tp": 12,
+        "fp": 12,
+        "fn": 29,
+        "sum_iou": 8.09157535337525
+      },
+      {
+        "index": 651,
+        "filename": "20151209201754Bh.jpeg",
+        "tp": 6,
+        "fp": 0,
+        "fn": 6,
+        "sum_iou": 4.006259288466626
+      },
+      {
+        "index": 65,
+        "filename": "20130214111534Ch.jpeg",
+        "tp": 4,
+        "fp": 4,
+        "fn": 3,
+        "sum_iou": 2.405358134875413
+      },
+      {
+        "index": 483,
+        "filename": "20131031185614Mh.jpeg",
+        "tp": 6,
+        "fp": 2,
+        "fn": 6,
+        "sum_iou": 4.145134929851189
+      },
+      {
+        "index": 641,
+        "filename": "20131128192214Mh.jpeg",
+        "tp": 4,
+        "fp": 14,
+        "fn": 15,
+        "sum_iou": 2.5788290192015215
+      },
+      {
+        "index": 317,
+        "filename": "20110526122534Ch.jpeg",
+        "tp": 7,
+        "fp": 2,
+        "fn": 8,
+        "sum_iou": 5.064503318883566
+      },
+      {
+        "index": 314,
+        "filename": "20120723095014Th.jpeg",
+        "tp": 8,
+        "fp": 4,
+        "fn": 4,
+        "sum_iou": 5.5940927832742435
+      },
+      {
+        "index": 626,
+        "filename": "20120917142654Bh.jpeg",
+        "tp": 7,
+        "fp": 5,
+        "fn": 1,
+        "sum_iou": 4.658274680457037
+      },
+      {
+        "index": 301,
+        "filename": "20121114172254Bh.jpeg",
+        "tp": 17,
+        "fp": 7,
+        "fn": 3,
+        "sum_iou": 11.547473722979664
+      }
+    ]
+  },
+  "tuning_indices": [
+    508,
+    303,
+    617,
+    76,
+    675,
+    628,
+    122,
+    111,
+    396,
+    602,
+    279,
+    615,
+    375,
+    452,
+    1,
+    529,
+    662,
+    189,
+    450,
+    491,
+    500,
+    403,
+    503,
+    39,
+    52,
+    42,
+    695,
+    212,
+    188,
+    69,
+    187,
+    384,
+    440,
+    410,
+    366,
+    475,
+    290,
+    137,
+    451,
+    286,
+    637,
+    275,
+    597,
+    437,
+    681,
+    687,
+    671,
+    177,
+    622,
+    646,
+    528,
+    484,
+    227,
+    57,
+    599,
+    673,
+    182,
+    102,
+    504,
+    370,
+    534,
+    106,
+    678,
+    651,
+    65,
+    483,
+    641,
+    317,
+    314,
+    626,
+    301
+  ],
+  "internal_indices": [
+    453,
+    369,
+    416,
+    81,
+    573,
+    603,
+    311,
+    342,
+    540,
+    267,
+    702,
+    533,
+    105,
+    266,
+    347,
+    190,
+    604,
+    593,
+    339,
+    525,
+    87,
+    5,
+    442,
+    385,
+    332,
+    359,
+    590,
+    114,
+    170,
+    123,
+    221,
+    329,
+    277,
+    349,
+    690,
+    611,
+    583,
+    117,
+    586,
+    372,
+    10,
+    63,
+    634,
+    167,
+    313,
+    296,
+    502,
+    490,
+    543,
+    555,
+    535,
+    272,
+    15,
+    432,
+    621,
+    287,
+    300,
+    195,
+    34,
+    547,
+    333,
+    49,
+    518,
+    41,
+    553,
+    113,
+    526,
+    141,
+    548,
+    609,
+    648
+  ],
+  "two_model_cuda_profile": {
+    "sample_images": 5,
+    "combined_inference_seconds_per_image": 0.42333319999888774,
+    "inference_seconds_each": [
+      0.547660199998063,
+      0.3924055000024964,
+      0.3923272999963956,
+      0.389850599996862,
+      0.39442240000062156
+    ],
+    "peak_allocated_vram_mib": 702.9248046875,
+    "peak_reserved_vram_mib": 934.0,
+    "max_abs_live_vs_cache_difference": 0.0
+  },
+  "limitation": "The original v2 was historically evaluated on the internal images; this is provisional and hidden evaluator parity is unverified."
+}
