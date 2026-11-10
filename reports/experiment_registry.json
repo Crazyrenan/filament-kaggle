@@ -1,5 +1,30 @@
 {
   "experiments": {
+    "ensemble_v2_v3_01": {
+      "baseline_global_pq": 0.4099034711305698,
+      "checkpoints": [
+        "checkpoints/unet_resnet34_v2/best_model.pth",
+        "checkpoints/unet_resnet34_v3_hard_negative_01/best_model.pth"
+      ],
+      "experiment_id": "ensemble_v2_v3_01",
+      "internal_global_pq": 0.4143044110433015,
+      "internal_report": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\ensemble_v2_v3_01_internal_20261110T001321Z.json",
+      "model_type": "inference_only_weighted_probability_ensemble",
+      "paired_bootstrap_95pct_delta_interval": [
+        -0.005600756428224392,
+        0.013921010867345951
+      ],
+      "selected_postprocessing": {
+        "mean_confidence": 0.96,
+        "min_area": 300,
+        "threshold": 0.75,
+        "v2_weight": 0.75
+      },
+      "selection_status": "not_selected",
+      "status": "evaluation_complete",
+      "submission_generated": false,
+      "tuning_report": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\ensemble_v2_v3_01_frozen_20261110T001241Z.json"
+    },
     "segformer_b2_01": {
       "architecture": "SegFormer",
       "benchmark_report": "C:\\Users\\Vinny\\Project\\Kaggle\\Solar Filament Segmentation\\reports\\model_benchmark_20261104T094701Z.json",
